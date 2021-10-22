@@ -9,4 +9,9 @@ public class TimerOfMethods {
         long endTime = System.nanoTime();
         return endTime - startTime;
     }
+
+    static void printEllapsedTime(){
+        //long l = ; // Do this first since printing takes time - 1000000 is ns to ms
+        System.out.println("Elapsed time: " + getEllapsedTime()/1000000);
+    }
 }

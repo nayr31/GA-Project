@@ -8,6 +8,12 @@ public class City {
         this.y = Float.parseFloat(y);
     }
 
+    City(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // Distance between cities is d = sqrt( delX^2 + delY^2 )
     double dist(City c) {
         return Math.sqrt(Math.pow(this.x - c.x, 2) + Math.pow(this.y - c.y, 2));
     }

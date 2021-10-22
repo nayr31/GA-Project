@@ -26,9 +26,53 @@ public class FileDecoder {
         return decode(filename);
     }
 
-    int askForPopSize(){
+    City manuallyInputCity(){
+        while (true){
+            try {
+                System.out.println("Enter x:");
+                float x = scanner.nextFloat();
+                System.out.println("Enter y:");
+                float y = scanner.nextFloat();
+                return new City(x, y);
+            } catch (InputMismatchException e){
+                System.out.println("Not a number, start again.");
+            }
+        }
+    }
+
+    int askMaxGen(){
+        while (true){
+            try {
+                System.out.println("Enter maximum chromosome generation:");
+                return scanner.nextInt();
+            } catch (InputMismatchException e){
+                System.out.println("Not a number, try again.");
+            }
+        }
+    }
+
+    int askForProgramType(){
         while(true){
-            System.out.println("\nPlease enter the population size:");
+            System.out.println("""
+                            Please choose an option:
+                            [0] - Exit
+                            [1] - Run standard program""");
+                            //[2] - Run pre-made performance tests
+                            //[3] - Run performance test with input""");
+            try {
+                int selection = scanner.nextInt();
+                if(selection >= 0 && selection <= 3)
+                    return selection;
+                System.out.println("Number not valid, input only the numbers listed.");
+            } catch (InputMismatchException e){
+                System.out.println("Not an int, try again.");
+            }
+        }
+    }
+
+    int askForInt(String message){
+        while(true){
+            System.out.println(message);
             try{
                 return scanner.nextInt();
             } catch (InputMismatchException e){
