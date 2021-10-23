@@ -7,10 +7,18 @@ public class GAProj {
     FileDecoder fd = new FileDecoder();
     ArrayList<City> cities;
     ArrayList<Chromosome> chromosomes;
+    CityLooker cityLooker;
 
     GAProj() {
         System.out.println("GA Project - Travelling Salesman.\n");
 
+        /*cities = fd.getCities();
+        CityLooker cityLooker = new CityLooker(cities);
+        Chromosome chromosome = generateRandomChromosome(cities.size());
+        cityLooker.draw(chromosome);
+        */
+
+        //CityLooker cityLooker = new CityLooker();
         while (true) {
             int selection = fd.askForType("""
                     Please choose an option:
@@ -27,7 +35,7 @@ public class GAProj {
 
     void runStandard() {
         // Step 1: Get input data (cities and their locations)
-        cities = fd.getInput();
+        cities = fd.getCities();
 
         // Step 2: Initialize Initial population
         chromosomes = initializeRandomStartingPopulation(fd.askForInt("Please enter population size:"));
@@ -54,9 +62,12 @@ public class GAProj {
         int tournamentCandidateNum = fd.askForInt("Tournament k (candidates)?");
         int finalSize = chromosomes.size();
 
+        openCityLooker();
+
         for (int i = 0; i < maximumGenerations; i++) {
             // Evaluate fitness
             scoreChromosomeDistances(); // Calculate and store the scores within the chromosomes
+            cityLooker.draw(bestOfTheBest()); // Draw the current best of the best chromosome
 
             // Select new population using selections
             tournamentSelection(tournamentCandidateNum);
@@ -96,6 +107,15 @@ public class GAProj {
         // This is after all generations of the program have been completed
         // Lets display the final chromosomes with their scores
         System.out.println("Generations complete!");
+    }
+
+    Chromosome bestOfTheBest(){
+        Chromosome theBest = new Chromosome();
+        for (Chromosome entry: chromosomes){
+            if (entry.score < theBest.score)
+                theBest = entry;
+        }
+        return theBest;
     }
 
     void tournamentSelection(int tournamentCandidateNum) {
@@ -239,6 +259,10 @@ public class GAProj {
         for (int i = 0; i < chromosomes.size(); i++) {
             System.out.println(i + ":" + chromosomes.get(i));
         }
+    }
+
+    void openCityLooker(){
+        cityLooker = new CityLooker(cities);
     }
 
     public static void main(String[] args) {

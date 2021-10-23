@@ -14,7 +14,7 @@ public class FileDecoder {
     }
 
     // Asks the user for input for the input file
-    ArrayList<City> getInput() {
+    ArrayList<City> getCities() {
         String filename;
         while (true) { // Continually ask the user for a valid filename
             System.out.println("Please enter the file name you wish to use as data.");
