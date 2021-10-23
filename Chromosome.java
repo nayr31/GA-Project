@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Chromosome {
 
     int[] data;
+    float score;
 
     Chromosome(int length) {
         this.data = new int[length];
@@ -10,6 +11,17 @@ public class Chromosome {
 
     Chromosome(int[] data){
         this.data = data;
+    }
+
+    Chromosome(Object[] data){
+        this.data = new int[data.length];
+        for (int i = 0; i < data.length ; i++) {
+            this.data[i] = (int)data[i];
+        }
+    }
+
+    Chromosome(){
+        score = 99999999;
     }
 
     public String toString() {

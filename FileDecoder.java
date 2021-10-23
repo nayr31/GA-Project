@@ -51,17 +51,12 @@ public class FileDecoder {
         }
     }
 
-    int askForProgramType(){
+    int askForType(String message, int selectionBound){
         while(true){
-            System.out.println("""
-                            Please choose an option:
-                            [0] - Exit
-                            [1] - Run standard program""");
-                            //[2] - Run pre-made performance tests
-                            //[3] - Run performance test with input""");
+            System.out.println(message);
             try {
                 int selection = scanner.nextInt();
-                if(selection >= 0 && selection <= 3)
+                if(selection >= 0 && selection <= selectionBound)
                     return selection;
                 System.out.println("Number not valid, input only the numbers listed.");
             } catch (InputMismatchException e){
