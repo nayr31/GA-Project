@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Chromosome {
 
@@ -24,11 +25,38 @@ public class Chromosome {
         score = 99999999;
     }
 
+    // Mutators
+    // - Swap = Swap two indices
+    // - Scramble = Mix up a range of indexes
+    // - Inversion = Reverse the order of a range
+
+    // Get two random indices and swap their values
+    void swapMutate(int timesToSwap){
+        for (int i = 0; i < timesToSwap; i++) {
+            Random r = new Random();
+            int city1 = r.nextInt(data.length); // Get a random index
+            int city2;
+            while (true){ // Get another random, unique index
+                city2 = r.nextInt(data.length);
+                if(city1 != city2) break;
+            }
+            int bucket = data[city1]; // Store value 1
+            data[city1] = data[city2]; // Swap from index 2
+            data[city2] = bucket; // Store the original value 1 into index 2
+        }
+    }
+
+    void swapMutate(){
+        swapMutate(1);
+    }
+
     public String toString() {
-        StringBuilder s = new StringBuilder("[");
-        for (int datum : data) s.append(datum).append(",");
-        s = new StringBuilder(s.substring(0, s.length() - 1));
-        s.append("]");
-        return s.toString();
+        StringBuilder stringBuilder = new StringBuilder("[");
+        for (int i = 0; i < data.length; i++) {
+            stringBuilder.append(data[i]);
+            if(i!=data.length-1) stringBuilder.append(","); // Skip the comma on the last index
+        }
+        stringBuilder.append("]");
+        return stringBuilder.toString();
     }
 }

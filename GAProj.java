@@ -13,13 +13,14 @@ public class GAProj {
 
         while (true) {
             int selection = fd.askForType("""
-                            Please choose an option:
-                            [0] - Exit
-                            [1] - Run standard program""", 1);
+                    Please choose an option:
+                    [0] - Exit
+                    [1] - Run standard program""", 1);
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
                 runStandard();
+                break;
             }
         }
     }
@@ -43,9 +44,13 @@ public class GAProj {
         int crossoverRate = fd.askForInt("Enter crossover rate in % (as an Integer)");
         int mutationRate = fd.askForInt("Enter mutation rate in % (as an Integer)");
         int crossoverType = fd.askForType("""
-                            Please choose an option:
-                            [0] - UOX with bitmask
-                            [1] - Run standard program""", 1); // TODO make second crossover
+                Please choose an option for crossover type:
+                [0] - UOX with bitmask
+                [1] - Yes""", 0); // TODO make second crossover
+        int mutationType = fd.askForType("""
+                Please choose an option for mutation type:
+                [0] - Swap
+                [1] - Yes""", 0); // TODO make more mutations
         int tournamentCandidateNum = fd.askForInt("Tournament k (candidates)?");
         int finalSize = chromosomes.size();
 
@@ -57,21 +62,53 @@ public class GAProj {
             tournamentSelection(tournamentCandidateNum);
 
             // Apply crossover and mutation
+            // Choose which type of crossover is happening
+            if (crossoverType == 0) { // Uniform with bitmask
+                for (int j = 0; j < chromosomes.size() / 2; j += 2) { // Pick pairs
+                    if (new Random().nextInt(100) <= crossoverRate) { // Determine if that crossover happens
+                        // Get the resulting crossed
+                        Chromosome[] crossed =
+                                crossoverUOX(chromosomes.get(j), chromosomes.get(j + 1), new Bitmask(cities.size()));
+                        // Add them to the list
+                        // There is a chance that the list could get bigger?
+                        if (chromosomes.size() + 2 <= finalSize) {
+                            chromosomes.add(crossed[0]);
+                            chromosomes.add(crossed[1]);
+                        } else { // If it gets past our limit, we will replace the parents
+                            chromosomes.set(j, crossed[0]);
+                            chromosomes.set(j + 1, crossed[1]);
+                        } // Of course, it could also be that we do nothing, but I'll leave that to the report
+                    }
+                }
+            }
+            // Mutation
+            for (Chromosome chromosome : chromosomes) { // For each chromosome
+                if (new Random().nextInt(100) <= mutationRate) { // Determine if the chromosome mutates
+                    if (mutationType == 0) {
+                        chromosome.swapMutate(); // Preform a swap mutation
+                    }
+                }
+            }
 
+            // Finally, fill in the missing chromosomes to keep the same population size
+            chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
+        // This is after all generations of the program have been completed
+        // Lets display the final chromosomes with their scores
+        System.out.println("Generations complete!");
     }
 
-    void tournamentSelection(int tournamentCandidateNum){
+    void tournamentSelection(int tournamentCandidateNum) {
         ArrayList<Chromosome> winners = new ArrayList<>();
 
         // Keep choosing candidates
-        while(chromosomes.size() != 0){
+        while (chromosomes.size() != 0) {
             if (chromosomes.size() < tournamentCandidateNum) break;
             Chromosome theBest = new Chromosome();
             // Find and fight contenders
             for (int i = 0; i < tournamentCandidateNum; i++) {
                 Chromosome fighter = chromosomes.remove(new Random().nextInt(chromosomes.size()));
-                if (fighter.score < theBest.score){
+                if (fighter.score < theBest.score) {
                     theBest = fighter;
                 }
             }
@@ -84,13 +121,13 @@ public class GAProj {
     }
 
     // Find the total path length of a chromosome
-    void scoreChromosomeDistances(){ // I could imagine this is very very expensive
+    void scoreChromosomeDistances() { // I could imagine this is very very expensive
         float totalDist;
-        for(Chromosome chromosome : chromosomes){ // For each chromosome
+        for (Chromosome chromosome : chromosomes) { // For each chromosome
             totalDist = 0;
-            for (int i = 0; i < chromosome.data.length-1; i++) { // For each city
+            for (int i = 0; i < chromosome.data.length - 1; i++) { // For each city
                 // Add the distance between increasing pairs of cities
-                totalDist += cities.get(chromosome.data[i]).dist(cities.get(chromosome.data[i+1]));
+                totalDist += cities.get(chromosome.data[i]).dist(cities.get(chromosome.data[i + 1]));
             }
             chromosome.score = totalDist;
         }
@@ -98,14 +135,13 @@ public class GAProj {
 
     // Crosses two chromosomes by a provided bitmask, then returns them as an array
     Chromosome[] crossoverUOX(Chromosome parent1, Chromosome parent2, Bitmask bitmask) {
+        // We use arrays here since we need to keep the ordering the same, instead of removing the non 1 bit members
         Object[] p1Copy = new Object[parent1.data.length];
         Object[] p2Copy = new Object[parent2.data.length];
 
+        // These lists keep track of which cities are in their respective lists
         ArrayList<Integer> knownCities1 = new ArrayList<>();
         ArrayList<Integer> knownCities2 = new ArrayList<>();
-
-        ArrayList<Integer> unknownCities1 = new ArrayList<>();
-        ArrayList<Integer> unknownCities2 = new ArrayList<>();
 
         // Inherit the '1' bit cities
         for (int i = 0; i < bitmask.mask.size(); i++) {
@@ -123,77 +159,59 @@ public class GAProj {
             if (p1Copy[i] == null && !knownCities1.contains(parent2.data[i])) {
                 p1Copy[i] = parent2.data[i]; // Copy the not yet satisfied city
                 knownCities1.add(parent2.data[i]); // Make sure we learn the newly added city
-            } else if (p1Copy[i] != null && !knownCities1.contains(parent2.data[i])) {
-                unknownCities1.add(parent2.data[i]); // Otherwise, we mark it as "to be filled in later"
             }
             // Then do the same for p2
             if (p2Copy[i] == null && !knownCities2.contains(parent1.data[i])) {
-                p2Copy[i] = parent1.data[i]; // Copy the not yet satisfied city
-                knownCities2.add(parent1.data[i]); // Make sure we learn the newly added city
-            } else if (p2Copy[i] != null && !knownCities2.contains(parent1.data[i])) {
-                unknownCities2.add(parent1.data[i]);
+                p2Copy[i] = parent1.data[i];
+                knownCities2.add(parent1.data[i]);
             }
         }
 
-        // Now we need to empty the unknown list
-        for (int i = 0; i < p1Copy.length; i++) {
-            if (p1Copy[i] == null){ // Find the empty spaces
-                p1Copy[i] = unknownCities1.remove(0); // Fill it in with an unknown city to that path
+        // The lists are done, but there are some index spaces not yet filled
+        ArrayList<Integer> notYetInList1 = findNotYetInKnown(knownCities1); // Get the missing cities
+        for (int i = 0; i < p1Copy.length; i++) { // Check through the array
+            if(p1Copy[i] == null){ // If there is an empty space (0 bit)
+                int notYetKnown = notYetInList1.remove(0);
+                p1Copy[i] = notYetKnown; // Fill it in with one not yet represented
+                //knownCities1.add(notYetKnown); // Not really needed, but this would go here
             }
-            if (p2Copy[i] == null){
-                p2Copy[i] = unknownCities2.remove(0);
+        }
+        ArrayList<Integer> notYetInList2 = findNotYetInKnown(knownCities2);
+        for (int i = 0; i < p2Copy.length; i++) {
+            if(p2Copy[i] == null){
+                int notYetKnown = notYetInList2.remove(0);
+                p2Copy[i] = notYetKnown;
+                //knownCities2.add(notYetKnown);
             }
         }
 
-        if(unknownCities1.isEmpty() || unknownCities2.isEmpty()){
-            System.out.println("Something bad happened in UOX splicing.");
+        return new Chromosome[]{new Chromosome(p1Copy), new Chromosome(p2Copy)};
+    }
+
+    // Determines which
+    ArrayList<Integer> findNotYetInKnown(ArrayList<Integer> known) {
+        ArrayList<Integer> compare = new ArrayList<>();
+        for (int i = 0; i < cities.size(); i++) {
+           compare.add(i);
         }
-
-        return new Chromosome[] {new Chromosome(p1Copy), new Chromosome(p2Copy)};
+        compare.removeIf(known::contains);
+        return compare;
     }
 
-    // Returns the performance metrics of populating a number of chromosomes
-    void popInitPerformanceTest() {
-        System.out.println("Calculating performance for random chromosome generation...");
-        TimeData[] timeData = new TimeData[7];
-        timeData[0] = chromoPerfTest(5, 5);
-        timeData[1] = chromoPerfTest(50, 50);
-        timeData[2] = chromoPerfTest(500, 500);
-        timeData[3] = chromoPerfTest(5000, 5000);
-        timeData[4] = chromoPerfTest(5, 5000000);
-        timeData[5] = chromoPerfTest(5000000, 5);
-        timeData[6] = chromoPerfTest(50000, 50000);
-        System.out.println("------------------");
-        System.out.printf("%-10s %-10s %-10s\n", "numSets", "length", "timeTaken(ms)");
-        for (TimeData d : timeData)
-            System.out.printf("%-10s %-10s %-10s\n", d.numberOfSets, d.sizeOfChromosome, d.time / 1000000);
-        System.out.println("------------------");
-    }
-
-    TimeData chromoPerfTest(int number, int size) {
-        return new TimeData(number, size, testChromsomeGeneration(number, size));
-    }
-
-    long testChromsomeGeneration(int number, int size) {
-        TimerOfMethods.startTimer();
-        generateXChromosomes(number, size);
-        return TimerOfMethods.getEllapsedTime();///1000000
-    }
-
-    void generateXChromosomes(int number, int size) {
-        for (int i = 0; i < number; i++)
-            generateRandomChromosome(size);
-    }
-
-    // Returns an ArrayList of random chromosomes that adhere to the population size given
     ArrayList<Chromosome> initializeRandomStartingPopulation(int popSize) {
-        ArrayList<Chromosome> chromosomes = new ArrayList<>();
-        for (int i = 0; i < popSize; i++)
-            chromosomes.add(generateRandomChromosome(cities.size()));
-        return chromosomes;
+        return generateXChromosomes(popSize, cities.size());
     }
 
-    // Returns a random Chromosome
+    // This method call returns a list of random chromosomes that number the original size of the
+    //  population minus the current size, with lengths of the number of cities
+    ArrayList<Chromosome> generateXChromosomes(int amountToHatch, int length) {
+        ArrayList<Chromosome> hatchlings = new ArrayList<>();
+        for (int i = 0; i < amountToHatch; i++)
+            hatchlings.add(generateRandomChromosome(length));
+        return hatchlings;
+    }
+
+    // Returns a random Chromosome (ie, a sequence of cities in random order)
     Chromosome generateRandomChromosome(int size) {
         // Create a new list, an populate it with integers that represent the city index
         ArrayList<Integer> present = new ArrayList<>();
@@ -215,6 +233,12 @@ public class GAProj {
             System.out.println(i + ":" + c);
         }
         System.out.println("Finished printing City data.");
+    }
+
+    void printChromosomes() {
+        for (int i = 0; i < chromosomes.size(); i++) {
+            System.out.println(i + ":" + chromosomes.get(i));
+        }
     }
 
     public static void main(String[] args) {

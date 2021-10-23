@@ -18,6 +18,7 @@ public class FileDecoder {
         String filename;
         while (true) { // Continually ask the user for a valid filename
             System.out.println("Please enter the file name you wish to use as data.");
+            scanner.nextLine();
             filename = scanner.nextLine();
             System.out.println("Trying \"" + filename + "\"");
             if (tryInput(filename)) break;
