@@ -10,7 +10,7 @@ public class TerminalControl extends JFrame {
     static final int height = 200;
     static final int commonColumns = 50;
     static String lastCommandInput = "Last input: ";
-    static JTextArea commandsReceivedArea = new JTextArea(3, commonColumns);
+    static JTextArea commandsReceivedArea = new JTextArea(4, commonColumns);
     static JTextArea statusArea = new JTextArea(3, commonColumns);
     static ArrayList<String> lastMessages = new ArrayList<>();
     static Semaphore semaphore = new Semaphore(0);
@@ -38,7 +38,7 @@ public class TerminalControl extends JFrame {
 
     private void initField() {
         add(commandsReceivedArea);
-        JTextField field = new JTextField(50);
+        JTextField field = new JTextField(commonColumns);
         add(field);
         JTextArea commandArea = new JTextArea(1, commonColumns);
         add(commandArea);

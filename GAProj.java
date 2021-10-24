@@ -13,13 +13,6 @@ public class GAProj {
     GAProj() {
         System.out.println("GA Project - Travelling Salesman.");
 
-        /*cities = fd.getCities();
-        CityLooker cityLooker = new CityLooker(cities);
-        Chromosome chromosome = generateRandomChromosome(cities.size());
-        cityLooker.draw(chromosome);*/
-
-
-
         //CityLooker cityLooker = new CityLooker();
         while (true) {
             int selection = fd.askForType("""
@@ -30,7 +23,6 @@ public class GAProj {
                 break;
             } else if (selection == 1) {
                 runStandard();
-                break;
             }
         }
     }
@@ -56,11 +48,12 @@ public class GAProj {
         int crossoverType = fd.askForType("""
                 Please choose an option for crossover type:
                 [0] - UOX with bitmask
-                [1] - Yes""", 0); // TODO make second crossover
+                [1] - PMX""", 1); // TODO make second crossover
         int mutationType = fd.askForType("""
                 Please choose an option for mutation type:
                 [0] - Swap
-                [1] - Yes""", 0); // TODO make more mutations
+                [1] - Scramble
+                [2] - Inversion""", 2); // TODO make more mutations
         int tournamentCandidateNum = fd.askForInt("Tournament k (candidates)?");
         int finalSize = chromosomes.size();
 
@@ -77,32 +70,38 @@ public class GAProj {
             // Apply crossover and mutation
             // Choose which type of crossover is happening
             Random crossoverRandom = new Random();
-            if (crossoverType == 0) { // Uniform with bitmask
-                for (int j = 0; j < chromosomes.size() / 2; j += 2) { // Pick pairs
-                    int r = crossoverRandom.nextInt(99) + 1;
-                    if (r <= crossoverRate) { // Determine if that crossover happens
-                        // Get the resulting crossed
-                        Chromosome[] crossed = uniformOrder(chromosomes.get(j), chromosomes.get(j + 1));
-                        // Add them to the list
-                        // There is a chance that the list could get bigger?
-                        if (chromosomes.size() + 2 <= finalSize) {
-                            chromosomes.add(crossed[0]);
-                            chromosomes.add(crossed[1]);
-                        } else { // If it gets past our limit, we will replace the parents
-                            chromosomes.set(j, crossed[0]);
-                            chromosomes.set(j + 1, crossed[1]);
-                        } // Of course, it could also be that we do nothing, but I'll leave that to the report
-                    }
+            for (int j = 0; j < chromosomes.size() / 2; j += 2) { // Pick pairs
+                int r = crossoverRandom.nextInt(99) + 1; // [0...99] -> [1...100]
+                if (r <= crossoverRate) { // Determine if that crossover happens
+                    // Get the resulting crossed
+                    Chromosome[] crossed = new Chromosome[2];
+                    // Determine the cross type
+                    if(crossoverType == 0)
+                        crossed = Crossover.uniformOrder(chromosomes.get(j), chromosomes.get(j + 1));
+                    else if(crossoverType == 1)
+                        crossed = Crossover.pmx(chromosomes.get(j), chromosomes.get(j + 1));
+                    // Add them to the list
+                    // There is a chance that the list could get bigger?
+                    if (chromosomes.size() + 2 <= finalSize) {
+                        chromosomes.add(crossed[0]);
+                        chromosomes.add(crossed[1]);
+                    } else { // If it gets past our limit, we will replace the parents
+                        chromosomes.set(j, crossed[0]);
+                        chromosomes.set(j + 1, crossed[1]);
+                    } // Of course, it could also be that we do nothing, but I'll leave that to the report
                 }
             }
             // Mutation
             Random mutatorRandom = new Random();
             for (Chromosome chromosome : chromosomes) { // For each chromosome
-                int r = mutatorRandom.nextInt(99) + 1;
+                int r = mutatorRandom.nextInt(99) + 1; // [0...99] -> [1...100]
                 if (r <= mutationRate) { // Determine if the chromosome mutates
-                    if (mutationType == 0) {
-                        chromosome.swapMutate(); // Preform a swap mutation
-                    }
+                    if (mutationType == 0)
+                        Mutation.swap(chromosome);
+                    else if (mutationType == 1)
+                        Mutation.scramble(chromosome);
+                    else if (mutationType == 2)
+                        Mutation.inversion(chromosome);
                 }
             }
 
@@ -111,12 +110,12 @@ public class GAProj {
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
         // This is after all generations of the program have been completed
-        System.out.println("Generations complete!");
+        TerminalControl.sendStatusMessage("Generations complete!");
     }
 
-    Chromosome bestOfTheBest(){
+    Chromosome bestOfTheBest() {
         Chromosome theBest = new Chromosome();
-        for (Chromosome entry: chromosomes){
+        for (Chromosome entry : chromosomes) {
             if (entry.score < theBest.score)
                 theBest = entry;
         }
@@ -156,55 +155,6 @@ public class GAProj {
             }
             chromosome.score = totalDist;
         }
-    }
-
-    Chromosome[] uniformOrder (Chromosome p1, Chromosome p2) {
-        Object[] child1 = new Object[p1.data.length];
-        Object[] child2 = new Object[p2.data.length];
-
-        ArrayList<Integer> knownInC1 = new ArrayList<>();
-        ArrayList<Integer> knownInC2 = new ArrayList<>();
-        ArrayList<Integer> knownNotInC1 = new ArrayList<>();
-        ArrayList<Integer> knownNotInC2 = new ArrayList<>();
-
-        Bitmask bitmask = new Bitmask(p1.data.length);
-
-        // Take which bits are 1 into the children by default
-        for (int i = 0; i < bitmask.mask.size(); i++) {
-            if (bitmask.mask.get(i) == 1) {
-                child1[i] = p1.data[i];
-                child2[i] = p2.data[i];
-                // Take note of which cities we took from the parents
-                knownInC1.add(p1.data[i]);
-                knownInC2.add(p2.data[i]);
-            }
-        }
-
-        // Get the cities of the opposite parent if the child does not already contain them.
-        for (int i = 0; i < child1.length; i++) {
-            if (child1[i] == null && !knownInC1.contains(p2.data[i])) {
-                child1[i] = p2.data[i];
-                knownInC1.add(p2.data[i]);
-            } else if (child1[i] != null && !knownInC1.contains(p2.data[i])) {
-                knownNotInC1.add(p2.data[i]);
-            }
-            if (child2[i] == null && !knownInC2.contains(p1.data[i])) {
-                child2[i] = p1.data[i];
-                knownInC2.add(p1.data[i]);
-            } else if (child2[i] != null && !knownInC2.contains(p1.data[i])) {
-                knownNotInC2.add(p1.data[i]);
-            }
-        }
-
-        // Fill in the blanks.
-        for (int i = 0; i < child1.length; i++) {
-            if (child1[i] == null)
-                child1[i] = knownNotInC1.remove(0);
-            if (child2[i] == null)
-                child2[i] = knownNotInC2.remove(0);
-        }
-
-        return new Chromosome[]{new Chromosome(child1), new Chromosome(child2)};
     }
 
     ArrayList<Chromosome> initializeRandomStartingPopulation(int popSize) {
@@ -250,7 +200,7 @@ public class GAProj {
         }
     }
 
-    void openCityLooker(){
+    void openCityLooker() {
         cityLooker = new CityLooker(cities);
     }
 

@@ -25,28 +25,6 @@ public class Chromosome {
         score = 99999999;
     }
 
-    // Mutators
-    // - Swap = Swap two indices
-    // - Scramble = Mix up a range of indexes
-    // - Inversion = Reverse the order of a range
-
-    // Get two random indices and swap their values
-    void swapMutate(int timesToSwap){
-        for (int i = 0; i < timesToSwap; i++) {
-            Random r = new Random();
-            int city1 = r.nextInt(data.length); // Get a random index
-            int city2 = r.nextInt(data.length);
-            while (city1 == city2) // Make sure they are different
-                city2 = r.nextInt(data.length);
-            int bucket = data[city1]; // Store value 1
-            data[city1] = data[city2]; // Swap from index 2
-            data[city2] = bucket; // Store the original value 1 into index 2
-        }
-    }
-
-    void swapMutate(){
-        swapMutate(1);
-    }
 
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("[");
