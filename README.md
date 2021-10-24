@@ -4,14 +4,14 @@ This was made with [IntelliJ](https://www.jetbrains.com/idea/) 2020, Java 15, an
 
 ## Notes
 
-- User prompts and inputs have a level of error that it can correct for, but it won't catch something like a negative population size.
-- 
+- User prompts and inputs have a level of error that it can correct for, but it won't catch something like a negative population size. This may include oversights on `scanner.nextLine()`, which can sometimes skip your first input.
+- The display which shows the progression of the generations can only show points within the limit of its bounding box. I've tried to offset this with a scaling factor, but points that are negative will always be off of the preview window.
 
 ## File details
 
 ### GAProj.java
 
-The main class. This takes care of populating, calculating, and in general all things that need to happen when it comes to number crunching.
+The main class. Holds the crossover methods and 
 
 ### FileDecoder.java
 
@@ -23,12 +23,12 @@ A data storage object. Stores and calculations locations and distances to other 
 
 ### Chromosome.java
 
-A data storage object. Keeps a list of cities (integers) at which can be searched through and manipulated.
-
-### TimeData.java
-
-A data storage object. Stores the time, number of iterations, and length of a chromosomes.
+A data storage object. Keeps a list of cities (integers) at which can be searched through and manipulated. Also handles mutations on itself.
 
 ### TimerOfMethods.java
 
 A static class for calculating times.
+
+### CityLooker.java
+
+A JFrame window. Contains everything required to display the cities and chromosomes provided.

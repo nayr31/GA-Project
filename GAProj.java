@@ -4,19 +4,21 @@ import java.util.Random;
 
 public class GAProj {
 
+    TerminalControl control = new TerminalControl();
     FileDecoder fd = new FileDecoder();
     ArrayList<City> cities;
     ArrayList<Chromosome> chromosomes;
     CityLooker cityLooker;
 
     GAProj() {
-        System.out.println("GA Project - Travelling Salesman.\n");
+        System.out.println("GA Project - Travelling Salesman.");
 
         /*cities = fd.getCities();
         CityLooker cityLooker = new CityLooker(cities);
         Chromosome chromosome = generateRandomChromosome(cities.size());
-        cityLooker.draw(chromosome);
-        */
+        cityLooker.draw(chromosome);*/
+
+
 
         //CityLooker cityLooker = new CityLooker();
         while (true) {
@@ -74,12 +76,13 @@ public class GAProj {
 
             // Apply crossover and mutation
             // Choose which type of crossover is happening
+            Random crossoverRandom = new Random();
             if (crossoverType == 0) { // Uniform with bitmask
                 for (int j = 0; j < chromosomes.size() / 2; j += 2) { // Pick pairs
-                    if (new Random().nextInt(100) <= crossoverRate) { // Determine if that crossover happens
+                    int r = crossoverRandom.nextInt(99) + 1;
+                    if (r <= crossoverRate) { // Determine if that crossover happens
                         // Get the resulting crossed
-                        Chromosome[] crossed =
-                                crossoverUOX(chromosomes.get(j), chromosomes.get(j + 1), new Bitmask(cities.size()));
+                        Chromosome[] crossed = uniformOrder(chromosomes.get(j), chromosomes.get(j + 1));
                         // Add them to the list
                         // There is a chance that the list could get bigger?
                         if (chromosomes.size() + 2 <= finalSize) {
@@ -93,8 +96,10 @@ public class GAProj {
                 }
             }
             // Mutation
+            Random mutatorRandom = new Random();
             for (Chromosome chromosome : chromosomes) { // For each chromosome
-                if (new Random().nextInt(100) <= mutationRate) { // Determine if the chromosome mutates
+                int r = mutatorRandom.nextInt(99) + 1;
+                if (r <= mutationRate) { // Determine if the chromosome mutates
                     if (mutationType == 0) {
                         chromosome.swapMutate(); // Preform a swap mutation
                     }
@@ -102,10 +107,10 @@ public class GAProj {
             }
 
             // Finally, fill in the missing chromosomes to keep the same population size
+            // We don't mutate before this because they would be random anyway
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
         // This is after all generations of the program have been completed
-        // Lets display the final chromosomes with their scores
         System.out.println("Generations complete!");
     }
 
@@ -153,69 +158,53 @@ public class GAProj {
         }
     }
 
-    // Crosses two chromosomes by a provided bitmask, then returns them as an array
-    Chromosome[] crossoverUOX(Chromosome parent1, Chromosome parent2, Bitmask bitmask) {
-        // We use arrays here since we need to keep the ordering the same, instead of removing the non 1 bit members
-        Object[] p1Copy = new Object[parent1.data.length];
-        Object[] p2Copy = new Object[parent2.data.length];
+    Chromosome[] uniformOrder (Chromosome p1, Chromosome p2) {
+        Object[] child1 = new Object[p1.data.length];
+        Object[] child2 = new Object[p2.data.length];
 
-        // These lists keep track of which cities are in their respective lists
-        ArrayList<Integer> knownCities1 = new ArrayList<>();
-        ArrayList<Integer> knownCities2 = new ArrayList<>();
+        ArrayList<Integer> knownInC1 = new ArrayList<>();
+        ArrayList<Integer> knownInC2 = new ArrayList<>();
+        ArrayList<Integer> knownNotInC1 = new ArrayList<>();
+        ArrayList<Integer> knownNotInC2 = new ArrayList<>();
 
-        // Inherit the '1' bit cities
+        Bitmask bitmask = new Bitmask(p1.data.length);
+
+        // Take which bits are 1 into the children by default
         for (int i = 0; i < bitmask.mask.size(); i++) {
             if (bitmask.mask.get(i) == 1) {
-                p1Copy[i] = parent1.data[i];
-                knownCities1.add(i);
-                p2Copy[i] = parent2.data[i];
-                knownCities2.add(i);
+                child1[i] = p1.data[i];
+                child2[i] = p2.data[i];
+                // Take note of which cities we took from the parents
+                knownInC1.add(p1.data[i]);
+                knownInC2.add(p2.data[i]);
             }
         }
 
-        // For each index in p1/p2copy
-        for (int i = 0; i < p1Copy.length; i++) {
-            // If the space is empty (0 in bit mask) and p1copy doesnt contain the same city index in parent2
-            if (p1Copy[i] == null && !knownCities1.contains(parent2.data[i])) {
-                p1Copy[i] = parent2.data[i]; // Copy the not yet satisfied city
-                knownCities1.add(parent2.data[i]); // Make sure we learn the newly added city
+        // Get the cities of the opposite parent if the child does not already contain them.
+        for (int i = 0; i < child1.length; i++) {
+            if (child1[i] == null && !knownInC1.contains(p2.data[i])) {
+                child1[i] = p2.data[i];
+                knownInC1.add(p2.data[i]);
+            } else if (child1[i] != null && !knownInC1.contains(p2.data[i])) {
+                knownNotInC1.add(p2.data[i]);
             }
-            // Then do the same for p2
-            if (p2Copy[i] == null && !knownCities2.contains(parent1.data[i])) {
-                p2Copy[i] = parent1.data[i];
-                knownCities2.add(parent1.data[i]);
-            }
-        }
-
-        // The lists are done, but there are some index spaces not yet filled
-        ArrayList<Integer> notYetInList1 = findNotYetInKnown(knownCities1); // Get the missing cities
-        for (int i = 0; i < p1Copy.length; i++) { // Check through the array
-            if(p1Copy[i] == null){ // If there is an empty space (0 bit)
-                int notYetKnown = notYetInList1.remove(0);
-                p1Copy[i] = notYetKnown; // Fill it in with one not yet represented
-                //knownCities1.add(notYetKnown); // Not really needed, but this would go here
-            }
-        }
-        ArrayList<Integer> notYetInList2 = findNotYetInKnown(knownCities2);
-        for (int i = 0; i < p2Copy.length; i++) {
-            if(p2Copy[i] == null){
-                int notYetKnown = notYetInList2.remove(0);
-                p2Copy[i] = notYetKnown;
-                //knownCities2.add(notYetKnown);
+            if (child2[i] == null && !knownInC2.contains(p1.data[i])) {
+                child2[i] = p1.data[i];
+                knownInC2.add(p1.data[i]);
+            } else if (child2[i] != null && !knownInC2.contains(p1.data[i])) {
+                knownNotInC2.add(p1.data[i]);
             }
         }
 
-        return new Chromosome[]{new Chromosome(p1Copy), new Chromosome(p2Copy)};
-    }
-
-    // Determines which
-    ArrayList<Integer> findNotYetInKnown(ArrayList<Integer> known) {
-        ArrayList<Integer> compare = new ArrayList<>();
-        for (int i = 0; i < cities.size(); i++) {
-           compare.add(i);
+        // Fill in the blanks.
+        for (int i = 0; i < child1.length; i++) {
+            if (child1[i] == null)
+                child1[i] = knownNotInC1.remove(0);
+            if (child2[i] == null)
+                child2[i] = knownNotInC2.remove(0);
         }
-        compare.removeIf(known::contains);
-        return compare;
+
+        return new Chromosome[]{new Chromosome(child1), new Chromosome(child2)};
     }
 
     ArrayList<Chromosome> initializeRandomStartingPopulation(int popSize) {

@@ -10,33 +10,41 @@ public class FileDecoder {
     // The nice thing about array lists is that they are both arrays, and lists
 
     FileDecoder() {
-        scanner = new Scanner(System.in);
+        //scanner = new Scanner(System.in);
     }
 
     // Asks the user for input for the input file
     ArrayList<City> getCities() {
         String filename;
         while (true) { // Continually ask the user for a valid filename
-            System.out.println("Please enter the file name you wish to use as data.");
-            scanner.nextLine();
-            filename = scanner.nextLine();
-            System.out.println("Trying \"" + filename + "\"");
+            TerminalControl.sendCommandText("Please enter the file name you wish to use as data.");
+            filename = getInputFromTerminalControl();
+            TerminalControl.sendStatusMessage("Trying \"" + filename + "\"");
             if (tryInput(filename)) break;
         }
-        System.out.println("Successfully read " + filename);
+        TerminalControl.sendStatusMessage("Successfully read " + filename);
         return decode(filename);
+    }
+
+    static String getInputFromTerminalControl(){
+        try{
+            return TerminalControl.getInput();
+        } catch (InterruptedException e){
+            TerminalControl.sendStatusMessage("Got interrupted reading the terminal control.");
+            return "";
+        }
     }
 
     City manuallyInputCity(){
         while (true){
             try {
-                System.out.println("Enter x:");
-                float x = scanner.nextFloat();
-                System.out.println("Enter y:");
-                float y = scanner.nextFloat();
+                TerminalControl.sendCommandText("Enter x:");
+                float x = Float.parseFloat(getInputFromTerminalControl());
+                TerminalControl.sendCommandText("Enter y:");
+                float y = Float.parseFloat(getInputFromTerminalControl());
                 return new City(x, y);
             } catch (InputMismatchException e){
-                System.out.println("Not a number, start again.");
+                TerminalControl.sendStatusMessage("Not a number, try again.");
             }
         }
     }
@@ -44,37 +52,37 @@ public class FileDecoder {
     int askMaxGen(){
         while (true){
             try {
-                System.out.println("Enter maximum chromosome generation:");
-                return scanner.nextInt();
+                TerminalControl.sendCommandText("Enter maximum chromosome generation:");
+                return Integer.parseInt(getInputFromTerminalControl());
             } catch (InputMismatchException e){
-                System.out.println("Not a number, try again.");
+                TerminalControl.sendStatusMessage("Not a number, try again.");
             }
         }
     }
 
     int askForType(String message, int selectionBound){
         while(true){
-            System.out.println(message);
+            TerminalControl.sendCommandText(message);
             try {
-                int selection = scanner.nextInt();
+                int selection = Integer.parseInt(getInputFromTerminalControl());
                 if(selection >= 0 && selection <= selectionBound)
                     return selection;
-                System.out.println("Number not valid, input only the numbers listed.");
+                TerminalControl.sendStatusMessage("Number not valid, input only the numbers listed.");
             } catch (InputMismatchException e){
-                System.out.println("Not an int, try again.");
+                TerminalControl.sendStatusMessage("Not an int, try again.");
             }
         }
     }
 
     int askForInt(String message){
         while(true){
-            System.out.println(message);
+            TerminalControl.sendCommandText(message);
             try{
-                return scanner.nextInt();
+                return Integer.parseInt(getInputFromTerminalControl());
             } catch (InputMismatchException e){
-                System.out.println("Incorrect format, requires an Integer.");
+                TerminalControl.sendStatusMessage("Incorrect format, requires an Integer.");
             } catch (Exception e){
-                System.out.println("Unknown error occurred:\n" + e);
+                TerminalControl.sendStatusMessage("Unknown error occurred:\n" + e);
             }
         }
     }
@@ -86,10 +94,10 @@ public class FileDecoder {
             new Scanner(new File(filename)).close();
             return true;
         } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
+            TerminalControl.sendStatusMessage("File not found.");
             return false;
         } catch (Exception e) {
-            System.out.println("Unknown error occurred:\n" + e);
+            TerminalControl.sendStatusMessage("Unknown error occurred:\n" + e);
             return false;
         }
     }
@@ -122,7 +130,7 @@ public class FileDecoder {
             reader.close();
             return cities;
         } catch (FileNotFoundException e) { // Scanner requires a try catch anyway
-            System.out.println("This shouldn't have happened, what happened?");
+            TerminalControl.sendStatusMessage("This shouldn't have happened, what happened?");
             return null;
         }
     }

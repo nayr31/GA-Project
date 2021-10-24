@@ -35,11 +35,9 @@ public class Chromosome {
         for (int i = 0; i < timesToSwap; i++) {
             Random r = new Random();
             int city1 = r.nextInt(data.length); // Get a random index
-            int city2;
-            while (true){ // Get another random, unique index
+            int city2 = r.nextInt(data.length);
+            while (city1 == city2) // Make sure they are different
                 city2 = r.nextInt(data.length);
-                if(city1 != city2) break;
-            }
             int bucket = data[city1]; // Store value 1
             data[city1] = data[city2]; // Swap from index 2
             data[city2] = bucket; // Store the original value 1 into index 2
