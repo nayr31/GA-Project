@@ -57,15 +57,6 @@ public class Crossover {
         return new Chromosome[]{new Chromosome(child1), new Chromosome(child2)};
     }
 
-    /*
-    static Chromosome[] pmx(Chromosome parent1, Chromosome parent2) {
-
-        return new Chromosome[] {
-                pmxComp(parent1, parent2, swathSzie, startPoint, endPoint),
-                pmxComp(parent2, parent1, swathSzie, startPoint, endPoint)
-        };
-    }*/
-
     // Preforms a partial crossover
     // Method derived from http://www.ijsrp.org/research-paper-1012/ijsrp-p1094.pdf
     static Chromosome[] pmx(Chromosome parent1, Chromosome parent2){
@@ -91,7 +82,7 @@ public class Crossover {
 
         // For the points in the swath
         for (int i = startPoint; i < endPoint ; i++) {
-            int j = i; //% parent1.data.length;
+            int j = i % parent1.data.length;
 
             // Find the index that was used in that order and store it
             int bucketIndex = (int) lookupC1[parent2.data[i]];

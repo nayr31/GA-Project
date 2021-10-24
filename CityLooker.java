@@ -56,9 +56,17 @@ public class CityLooker extends JFrame {
         pack();
         // Normal arguments
         setTitle("-Traveling Salesman problem-");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
         setSize(width, height);
+        setVisible(false);
+    }
+
+    public void showWindow(){
         setVisible(true);
+    }
+
+    public void hideWindow(){
+        setVisible(false);
     }
 
     // Call this whenever we need to redraw a new chromosome

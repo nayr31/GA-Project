@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class FileDecoder {
 
+    static String filename = "";
     Scanner scanner;
     // The nice thing about array lists is that they are both arrays, and lists
 
@@ -15,7 +16,7 @@ public class FileDecoder {
 
     // Asks the user for input for the input file
     ArrayList<City> getCities() {
-        String filename;
+
         while (true) { // Continually ask the user for a valid filename
             TerminalControl.sendCommandText("Please enter the file name you wish to use as data.");
             filename = getInputFromTerminalControl();

@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 public class TerminalControl extends JFrame {
 
     static final int width = 600;
-    static final int height = 200;
+    static final int height = 225;
     static final int commonColumns = 50;
     static String lastCommandInput = "Last input: ";
     static JTextArea commandsReceivedArea = new JTextArea(4, commonColumns);
