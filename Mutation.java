@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
@@ -30,20 +29,23 @@ public class Mutation {
         commonMutate(chromosome, "Inverse");
     }
 
+    // Common mutation method used between scramble and inversion
     static private void commonMutate(Chromosome chromosome, String type){
         Random r = new Random();
 
-        // Start will always be in the first half
-        int start = r.nextInt(chromosome.data.length/2-1);
-        // End will always be in the second half
-        int end = r.nextInt(chromosome.data.length/4-1) + chromosome.data.length/2-1;
-        // The total would occur when start = 0, and end = length/4 + length/2, max is 3/4 length
-        if(end > chromosome.data.length) // Just in case
-            end = chromosome.data.length;
+        int startNum = r.nextInt(chromosome.data.length-2); // Start index is anywhere in the array minus 2
+        // This makes the final range always equal at least 2 (-1 for the end, -1 for the one before it)
+        int diff = chromosome.data.length-1 - startNum; // The range in between the start and the end of the array
+        if(diff >= chromosome.data.length/3) diff = chromosome.data.length/3; // Limit it to a third of the array
+        int endNum = startNum + r.nextInt(diff) + 1; // Generate a random number in between the start and the end
+        // Since it can get to equal 0, we add 1 so that we can have at least 2 elements
+
+        if(endNum > chromosome.data.length) // Just in case my math was wrong
+            endNum = chromosome.data.length;
 
         ArrayList<Integer> list = new ArrayList<>();
-        // Take note of the order of numbers that appear
-        for (int i = start; i <end ; i++)
+        // Take note of the order of numbers that appear in the swath
+        for (int i = startNum; i <endNum ; i++)
             list.add(chromosome.data[i]);
 
         // Choose which type of collection change to do
@@ -53,7 +55,7 @@ public class Mutation {
             Collections.reverse(list);
 
         // Replace the old numbers with the new list
-        for (int i = start; i <end ; i++)
-            chromosome.data[i] = list.get(i);
+        for (int i = startNum; i <endNum ; i++)
+            chromosome.data[i] = list.remove(0);
     }
 }

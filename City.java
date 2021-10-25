@@ -1,3 +1,5 @@
+// A data storage object that houses the required information for a city
+// Also can determine the distance to another city from itself
 public class City {
 
     // Stores the location of a city

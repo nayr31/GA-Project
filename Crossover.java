@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+// This class houses all of the crossover methods
 public class Crossover {
 
     // Uniform order crossover with bitmask
@@ -8,6 +9,7 @@ public class Crossover {
     // - Creates two children with the same cities at the index where the bit is 1
     // - Checks over the empty spaces to see if the other parent has a not yet represented city (otherwise its known missing)
     // - Fill in the known missing values
+    // Adapted from this python code https://puphaiboon-kreecha.medium.com/uniform-order-based-crossover-uox-186e137cd9bd
     static Chromosome[] uniformOrder(Chromosome parent1, Chromosome parent2) {
         Object[] child1 = new Object[parent1.data.length];
         Object[] child2 = new Object[parent2.data.length];
@@ -30,29 +32,38 @@ public class Crossover {
             }
         }
 
-        // Get the cities of the opposite parent if the child does not already contain them.
         for (int i = 0; i < child1.length; i++) {
-            if (child1[i] == null && !knownInC1.contains(parent2.data[i])) {
-                child1[i] = parent2.data[i];
-                knownInC1.add(parent2.data[i]);
-            } else if (child1[i] != null && !knownInC1.contains(parent2.data[i])) {
-                knownNotInC1.add(parent2.data[i]); // Otherwise we know its not in yet
+            // If the index at the other parent is not in this child
+            if(!knownInC1.contains(parent2.data[i])){
+                if (child1[i] == null) { // If its null, we inherit
+                    child1[i] = parent2.data[i];
+                    knownInC1.add(parent2.data[i]);
+                } else if (child1[i] != null) { // If it isn't, then we know that it is missing
+                    knownNotInC1.add(parent2.data[i]); // Otherwise we know its not in yet
+                }
             }
-            if (child2[i] == null && !knownInC2.contains(parent1.data[i])) {
-                child2[i] = parent1.data[i];
-                knownInC2.add(parent1.data[i]);
-            } else if (child2[i] != null && !knownInC2.contains(parent1.data[i])) {
-                knownNotInC2.add(parent1.data[i]);
+            // The same happens with child 2
+            if (!knownInC2.contains(parent1.data[i])) {
+                if (child2[i] == null) {
+                    child2[i] = parent1.data[i];
+                    knownInC2.add(parent1.data[i]);
+                } else if (child2[i] != null) {
+                    knownNotInC2.add(parent1.data[i]);
+                }
             }
         }
 
-        // Fill in the blanks.
+        // Fill in the blanks with cities we know aren't in the sequence
         for (int i = 0; i < child1.length; i++) {
             if (child1[i] == null)
                 child1[i] = knownNotInC1.remove(0);
             if (child2[i] == null)
                 child2[i] = knownNotInC2.remove(0);
         }
+        // Running through the chromosome length will have a length of n
+        // The amount of null operators are equal to n - (number of 0 bits) - (number of parent 1/2 inherited) = m
+        // The amount in knownNotInCX is always equal to this value, so it should never be larger than or equal to n
+        // This means that this method will always work without checks to make sure it is empty
 
         return new Chromosome[]{new Chromosome(child1), new Chromosome(child2)};
     }

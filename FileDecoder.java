@@ -4,29 +4,27 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+// Handles all input of user information
 public class FileDecoder {
 
     static String filename = "";
-    Scanner scanner;
     // The nice thing about array lists is that they are both arrays, and lists
-
-    FileDecoder() {
-        //scanner = new Scanner(System.in);
-    }
 
     // Asks the user for input for the input file
     ArrayList<City> getCities() {
-
         while (true) { // Continually ask the user for a valid filename
             TerminalControl.sendCommandText("Please enter the file name you wish to use as data.");
             filename = getInputFromTerminalControl();
             TerminalControl.sendStatusMessage("Trying \"" + filename + "\"");
             if (tryInput(filename)) break;
+            else TerminalControl.sendStatusMessage("Something very wrong happened." +
+                    "\nPlease restart the program, making sure I have read permissions.");
         }
         TerminalControl.sendStatusMessage("Successfully read " + filename);
         return decode(filename);
     }
 
+    // Reserves the semaphore and returns the gotten value after it is released
     static String getInputFromTerminalControl(){
         try{
             return TerminalControl.getInput();
@@ -36,6 +34,8 @@ public class FileDecoder {
         }
     }
 
+    // Might make this an option later idk
+    /*
     City manuallyInputCity(){
         while (true){
             try {
@@ -48,19 +48,10 @@ public class FileDecoder {
                 TerminalControl.sendStatusMessage("Not a number, try again.");
             }
         }
-    }
+    }*/
 
-    int askMaxGen(){
-        while (true){
-            try {
-                TerminalControl.sendCommandText("Enter maximum chromosome generation:");
-                return Integer.parseInt(getInputFromTerminalControl());
-            } catch (InputMismatchException e){
-                TerminalControl.sendStatusMessage("Not a number, try again.");
-            }
-        }
-    }
-
+    // This is used for multi-type int input, with a bound
+    // You can see this used when selecting options like crossover type
     int askForType(String message, int selectionBound){
         while(true){
             TerminalControl.sendCommandText(message);
@@ -75,6 +66,7 @@ public class FileDecoder {
         }
     }
 
+    // Asks the user for an int input, with a message to display to the TerminalControl
     int askForInt(String message){
         while(true){
             TerminalControl.sendCommandText(message);
@@ -88,6 +80,7 @@ public class FileDecoder {
         }
     }
 
+    // Attempts to read a file by filename
     boolean tryInput(String filename) {
         // To test the file, we try opening it
         try {

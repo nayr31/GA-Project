@@ -18,7 +18,7 @@ public class GAProj {
                     Please choose an option:
                     [0] - Exit
                     [1] - Run standard program
-                    [2] - Show last result""", 2);
+                    [2] - Show last result (node network)""", 2);
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
@@ -30,32 +30,8 @@ public class GAProj {
                     TerminalControl.sendStatusMessage("No last result present!");
             }
         }
+        TerminalControl.sendStatusMessage("No longer receiving inputs.\nHave a nice day.");
     }
-
-    private void printResults(int maxGen, int k, int crossoverType, int crossoverRate, int mutationType,
-                              int mutationRate, int bestFirst, int bestLast, ArrayList<Float> avgPerGeneration) {
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add("File: " + FileDecoder.filename);
-        lines.add("------------Properties------------");
-        lines.add("Number of cities: " + cities.size());
-        lines.add("Number of chromosomes: " + chromosomes.size());
-        lines.add("Number of generations: " + maxGen);
-        lines.add("Tournament candidates: " + k);
-        lines.add("Crossover type: " + (crossoverType == 0 ? "UOX with bitmask" : "PMX"));
-        lines.add("Crossover rate: " + crossoverRate + "%");
-        lines.add("Mutation type: " + (mutationType == 0 ? "Swap" : mutationType == 1 ? "Scramble" : "Inversion"));
-        lines.add("Mutation rate: " + mutationRate + "%");
-        lines.add("------------Results---------------");
-        lines.add("Average distance of first generation: " + avgPerGeneration.get(0));
-        lines.add("Average distance of last generation: " + avgPerGeneration.get(avgPerGeneration.size()-1));
-        lines.add("Best distance of first generation: " + bestFirst);
-        lines.add("Best distance of last generation: " + bestLast);
-        lines.add("------------Average per generation---------------");
-        for (int i = 0; i < avgPerGeneration.size(); i++)
-            lines.add(i + " : " + avgPerGeneration.get(i));
-        lines.add("EOF");
-        ReportWriter.print(lines);
-    }//TODO make another panel that opens a data file and makes a graph
 
     void runStandard() {
         // Step 1: Get input data (cities and their locations)
@@ -65,7 +41,7 @@ public class GAProj {
         chromosomes = initializeRandomStartingPopulation(fd.askForInt("Please enter population size:"));
 
         // Step 3: Evaluate, select, and mutate
-        runEval(fd.askMaxGen());
+        runEval(fd.askForInt("Enter maximum chromosome generation:"));
     }
 
     // Runs evaluation simulation and selection based on existing cities and chromosomes
@@ -74,7 +50,7 @@ public class GAProj {
     // - Apply crossover and mutation
     void runEval(int maximumGenerations) {
         ArrayList<Float> avgPerGeneration = new ArrayList<>();
-        int bestFirst = -1, bestLast = -1;
+        ArrayList<Float> bestPerGeneration = new ArrayList<>();
 
         int crossoverType = fd.askForType("""
                 Please choose an option for crossover type:
@@ -98,8 +74,7 @@ public class GAProj {
             scoreChromosomeDistances(); // Calculate and store the scores within the chromosomes
             // It is really important that this is the first thing to happen!
             Chromosome theBestChromosome = bestOfTheBest();
-            if(i==0) bestFirst = (int)theBestChromosome.score;
-            else if(i==maximumGenerations-1) bestLast = (int)theBestChromosome.score;
+            bestPerGeneration.add(theBestChromosome.score);
             cityLooker.draw(theBestChromosome); // Draw the current best of the best chromosome
             avgPerGeneration.add(averageOfTheAverage()); // Record the average of this generation
 
@@ -124,9 +99,9 @@ public class GAProj {
                     Chromosome[] crossed = new Chromosome[2];
                     // Determine the cross type
                     if(crossoverType == 0)
-                        crossed = Crossover.uniformOrder(chromosomes.get(j), chromosomes.get(j + 1));
+                        crossed = Crossover.uniformOrder(winners.get(j), winners.get(j + 1));
                     else if(crossoverType == 1)
-                        crossed = Crossover.pmx(chromosomes.get(j), chromosomes.get(j + 1));
+                        crossed = Crossover.pmx(winners.get(j), winners.get(j + 1));
                     // Add them to the list
                     // There is a chance that the list could get bigger?
                     // Limit it to the current children plus the parent size
@@ -158,8 +133,8 @@ public class GAProj {
         }
         // This is after all generations of the program have been completed
         TerminalControl.sendStatusMessage("Generations complete!");
-        printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
-                mutationType, mutationRate, bestFirst, bestLast, avgPerGeneration);
+        ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
+                mutationType, mutationRate, bestPerGeneration, avgPerGeneration, cities.size(), chromosomes.size());
     }
 
     Chromosome bestOfTheBest() {

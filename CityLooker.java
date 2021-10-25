@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 // A frame for displaying the information for the tsp problem
+// Currently doesn't display them all correctly, but it does the job
 public class CityLooker extends JFrame {
 
     static final int width = 1000;
@@ -46,27 +47,11 @@ public class CityLooker extends JFrame {
     }
 
     private void setup(){
-        setResizable(false); // No resizing the window
-        // Make it so the window appears in the middle of the screen
-        int sWidth = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2;
-        int sHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2;
-        int x = sWidth - (width / 2);
-        int y = sHeight - (height / 2);
-        setLocation(x, y);
-        pack();
-        // Normal arguments
-        setTitle("-Traveling Salesman problem-");
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setSize(width, height);
-        setVisible(false);
+        FrameSetup.setup(this,"-Traveling Salesman problem-", width, height, false, HIDE_ON_CLOSE);
     }
 
     public void showWindow(){
         setVisible(true);
-    }
-
-    public void hideWindow(){
-        setVisible(false);
     }
 
     // Call this whenever we need to redraw a new chromosome

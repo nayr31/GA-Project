@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
+// The main interface with interacting with the program
+// Displays user prompts, and program responses
 public class TerminalControl extends JFrame {
 
     static final int width = 600;
@@ -20,30 +22,24 @@ public class TerminalControl extends JFrame {
     }
 
     private void setup(){
-        // Make it so the window appears in the middle of the screen
-        int sWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2;
-        int sHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2;
-        int x = sWidth - (width / 2);
-        int y = sHeight - (height / 2);
-        setLocation(x, y);
-        pack();
+        FrameSetup.setup(this,"-Traveling Salesman Input-", width, height, true, EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
         initField();
-        // Normal arguments
-        setTitle("-Traveling Salesman Input-");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(width, height);
-        setVisible(true);
     }
 
+    // Creates and places the fields on the screen
     private void initField() {
+        // User prompts
         add(commandsReceivedArea);
+        // User inputs
         JTextField field = new JTextField(commonColumns);
         add(field);
+        // User input echo
         JTextArea commandArea = new JTextArea(1, commonColumns);
         add(commandArea);
         commandArea.setText(lastCommandInput);
         commandArea.setEditable(false);
+        // Set the enter key to release the semaphore for user input
         field.addActionListener(event ->{
             String textFromField = field.getText();
             field.setText("");
