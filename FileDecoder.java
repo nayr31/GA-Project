@@ -17,8 +17,6 @@ public class FileDecoder {
             filename = getInputFromTerminalControl();
             TerminalControl.sendStatusMessage("Trying \"" + filename + "\"");
             if (tryInput(filename)) break;
-            else TerminalControl.sendStatusMessage("Something very wrong happened." +
-                    "\nPlease restart the program, making sure I have read permissions.");
         }
         TerminalControl.sendStatusMessage("Successfully read " + filename);
         return decode(filename);

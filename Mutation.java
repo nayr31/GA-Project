@@ -33,9 +33,14 @@ public class Mutation {
     static private void commonMutate(Chromosome chromosome, String type){
         Random r = new Random();
 
+        // Get a range in the sequence that is between 1/4 and 1/3 of the length of the sequence
         int startNum = r.nextInt(chromosome.data.length-2); // Start index is anywhere in the array minus 2
         // This makes the final range always equal at least 2 (-1 for the end, -1 for the one before it)
         int diff = chromosome.data.length-1 - startNum; // The range in between the start and the end of the array
+        if(diff < chromosome.data.length/4) { // Make sure it at least mutates 1/4 of the sequence
+            startNum = chromosome.data.length-chromosome.data.length/4;
+            diff = chromosome.data.length-1 - startNum;
+        }
         if(diff >= chromosome.data.length/3) diff = chromosome.data.length/3; // Limit it to a third of the array
         int endNum = startNum + r.nextInt(diff) + 1; // Generate a random number in between the start and the end
         // Since it can get to equal 0, we add 1 so that we can have at least 2 elements
@@ -43,6 +48,7 @@ public class Mutation {
         if(endNum > chromosome.data.length) // Just in case my math was wrong
             endNum = chromosome.data.length;
 
+        // Use the range to make a mutation, depending on the type that was given
         ArrayList<Integer> list = new ArrayList<>();
         // Take note of the order of numbers that appear in the swath
         for (int i = startNum; i <endNum ; i++)

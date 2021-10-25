@@ -14,11 +14,11 @@ public class GAProj {
         System.out.println("GA Project - Travelling Salesman.");
 
         while (true) {
-            int selection = fd.askForType("""
-                    Please choose an option:
-                    [0] - Exit
-                    [1] - Run standard program
-                    [2] - Show last result (node network)""", 2);
+            int selection = fd.askForType(
+                    "Please choose an option:\n" +
+                    "[0] - Exit\n" +
+                    "[1] - Run standard program\n" +
+                    "[2] - Show last result (node network)\n", 2);
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
@@ -52,16 +52,16 @@ public class GAProj {
         ArrayList<Float> avgPerGeneration = new ArrayList<>();
         ArrayList<Float> bestPerGeneration = new ArrayList<>();
 
-        int crossoverType = fd.askForType("""
-                Please choose an option for crossover type:
-                [0] - UOX with bitmask
-                [1] - PMX""", 1);
+        int crossoverType = fd.askForType(
+                "Please choose an option for crossover type:\n" +
+                "[0] - UOX with bitmask\n" +
+                "[1] - PMX", 1);
         int crossoverRate = fd.askForInt("Enter crossover rate in % (as an Integer)");
-        int mutationType = fd.askForType("""
-                Please choose an option for mutation type:
-                [0] - Swap
-                [1] - Scramble
-                [2] - Inversion""", 2);
+        int mutationType = fd.askForType(
+                "Please choose an option for mutation type:\n" +
+                "[0] - Swap\n" +
+                "[1] - Scramble\n" +
+                "[2] - Inversion", 2);
         int mutationRate = fd.askForInt("Enter mutation rate in % (as an Integer)");
         int tournamentCandidateNum = fd.askForInt("Tournament k (candidates)?");
         int finalSize = chromosomes.size();
@@ -195,10 +195,10 @@ public class GAProj {
     // This method call returns a list of random chromosomes that number the original size of the
     //  population minus the current size, with lengths of the number of cities
     ArrayList<Chromosome> generateXChromosomes(int amountToHatch, int length) {
-        ArrayList<Chromosome> hatchlings = new ArrayList<>();
+        ArrayList<Chromosome> hatchling = new ArrayList<>();
         for (int i = 0; i < amountToHatch; i++)
-            hatchlings.add(generateRandomChromosome(length));
-        return hatchlings;
+            hatchling.add(generateRandomChromosome(length));
+        return hatchling;
     }
 
     // Returns a random Chromosome (ie, a sequence of cities in random order)
