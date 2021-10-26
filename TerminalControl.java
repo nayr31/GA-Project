@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 // The main interface with interacting with the program
@@ -17,6 +16,7 @@ public class TerminalControl extends JFrame {
     static ArrayList<String> lastMessages = new ArrayList<>();
     static Semaphore semaphore = new Semaphore(0);
 
+    // TODO convert this frame into an arch-frame, so that the static context of it can be used to not call it
     TerminalControl(){
         setup();
     }
@@ -65,14 +65,5 @@ public class TerminalControl extends JFrame {
 
     static void sendStatusMessage(String text){
         statusArea.setText(text);
-    }
-
-    static private String buildStatusString(){
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < lastMessages.size(); i++) {
-            stringBuilder.append(lastMessages.get(i));
-            if(i < lastMessages.size()-1) stringBuilder.append("\n");
-        }
-        return stringBuilder.toString();
     }
 }

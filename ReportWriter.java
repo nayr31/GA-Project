@@ -31,12 +31,18 @@ public class ReportWriter {
         lines.add("-------Best per generation--------");
         for (Float aFloat : bestPerGeneration) lines.add(Float.toString(aFloat));
         lines.add("EOF");
-        ReportWriter.print(lines);
+        String title = "";
+        title += numCities + "-" + numChromosomes + "-" + maxGen + "-" + k + "-" +
+                (crossoverType == 0 ? "UOX with bitmask" : "PMX") + "-" +
+                crossoverRate + "%-" +
+                (mutationType == 0 ? "Swap" : mutationType == 1 ? "Scramble" : "Inversion") + "-" +
+                mutationRate + "%";
+        ReportWriter.print(lines, title + ".txt");
     }
 
-    private static void print(ArrayList<String> lines) {
+    private static void print(ArrayList<String> lines, String title) {
         try{
-            Files.write(Paths.get("report.txt"), lines, StandardOpenOption.CREATE);
+            Files.write(Paths.get(title), lines, StandardOpenOption.CREATE);
         } catch (IOException e){
             TerminalControl.sendStatusMessage("Error writing report file.");
             System.out.println("Error writing report file.");
