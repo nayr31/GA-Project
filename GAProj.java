@@ -18,7 +18,7 @@ public class GAProj {
                     "Please choose an option:\n" +
                     "[0] - Exit\n" +
                     "[1] - Run standard program\n" +
-                    "[2] - Show last result (node network)\n", 2);
+                    "[2] - Show last result (node network)", 2);
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
@@ -63,7 +63,10 @@ public class GAProj {
                 "[1] - Scramble\n" +
                 "[2] - Inversion", 2);
         int mutationRate = fd.askForInt("Enter mutation rate in % (as an Integer)");
-        int tournamentCandidateNum = fd.askForInt("Tournament k (candidates)?");
+        int tournamentCandidateNum = fd.askForInt(
+                        "Tournament k (candidates)?" +
+                        "\nThis will also be the elitism size." +
+                        "\nElitism = numChromosomes  / numCandidates");
         int finalSize = chromosomes.size();
 
         cityLooker = new CityLooker(cities);
@@ -79,6 +82,8 @@ public class GAProj {
             avgPerGeneration.add(averageOfTheAverage()); // Record the average of this generation
 
             // Select new population using selections
+            // This should crop the total population by a factor of the number of candidates k
+            // The outcome should be a list of the list size * (1/k) best chromosomes, providing elitism of this size
             tournamentSelection(tournamentCandidateNum);
 
             // Set up the elitism to preserve the genes through mutation
@@ -127,6 +132,9 @@ public class GAProj {
 
             // Need add the winners back into the pool
             chromosomes.addAll(winners);
+            // Make sure that the best of the best is always added
+            if(!chromosomes.contains(theBestChromosome))
+                chromosomes.add(theBestChromosome);
 
             // Finally, fill in the missing chromosomes to keep the same population size
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));

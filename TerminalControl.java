@@ -9,7 +9,7 @@ import java.util.concurrent.Semaphore;
 public class TerminalControl extends JFrame {
 
     static final int width = 600;
-    static final int height = 225;
+    static final int height = 240;
     static final int commonColumns = 50;
     static String lastCommandInput = "Last input: ";
     static JTextArea commandsReceivedArea = new JTextArea(4, commonColumns);
@@ -64,13 +64,7 @@ public class TerminalControl extends JFrame {
     }
 
     static void sendStatusMessage(String text){
-        sendStatusMessage(new String[] {text});
-    }
-
-    static void sendStatusMessage(String[] text){
-        lastMessages.clear();
-        Collections.addAll(lastMessages, text);
-        statusArea.setText(buildStatusString());
+        statusArea.setText(text);
     }
 
     static private String buildStatusString(){

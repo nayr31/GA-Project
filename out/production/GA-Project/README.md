@@ -25,10 +25,6 @@ A data storage object. Stores and calculations locations and distances to other 
 
 A data storage object. Keeps a list of cities (integers) at which can be searched through and manipulated. Also handles mutations on itself.
 
-### TimerOfMethods.java
-
-A static class for calculating times.
-
 ### CityLooker.java
 
 A JFrame window. Contains everything required to display the cities and chromosomes provided.
