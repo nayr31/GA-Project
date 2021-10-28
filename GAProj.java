@@ -85,6 +85,7 @@ public class GAProj {
             // This should crop the total population by a factor of the number of candidates k
             // The outcome should be a list of the list size * (1/k) best chromosomes, providing elitism of this size
             tournamentSelection(tournamentCandidateNum);
+            // This list will be all of the winners, and those that didn't compete due to size limitation
 
             // Set up the elitism to preserve the genes through mutation
             ArrayList<Chromosome> winners = new ArrayList<>(chromosomes);
