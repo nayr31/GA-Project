@@ -11,7 +11,7 @@ public class TerminalControl extends JFrame {
     static final int height = 240;
     static final int commonColumns = 50;
     static String lastCommandInput = "Last input: ";
-    static JTextArea commandsReceivedArea = new JTextArea(4, commonColumns);
+    static JTextArea commandsReceivedArea = new JTextArea(5, commonColumns);
     static JTextArea statusArea = new JTextArea(3, commonColumns);
     static ArrayList<String> lastMessages = new ArrayList<>();
     static Semaphore semaphore = new Semaphore(0);

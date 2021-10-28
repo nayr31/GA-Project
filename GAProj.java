@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 
+// Main class
+// Run this to be prompted for information or run standardized testing
 public class GAProj {
 
     TerminalControl control = new TerminalControl();
@@ -18,7 +18,8 @@ public class GAProj {
                     "Please choose an option:\n" +
                     "[0] - Exit\n" +
                     "[1] - Run standard program\n" +
-                    "[2] - Show last result (node network)", 2);
+                    "[2] - Show last result (node network)" + 
+                    "[3] - Run 5 seed set", 3);
             //TODO Make a 5 seed run of a set of runs
             if (selection == 0) {
                 break;
@@ -29,9 +30,47 @@ public class GAProj {
                     cityLooker.showWindow();
                 else
                     TerminalControl.sendStatusMessage("No last result present!");
+            } else if (selection == 3){
+                runFiveSeedStandard();
             }
         }
         TerminalControl.sendStatusMessage("No longer receiving inputs.\nHave a nice day.");
+    }
+
+    void runFiveSeedStandard(){
+
+        // Input will be the same set of cities
+        cities = fd.getCities();
+        // Set the standard testing parameters for the standard 5 seed output
+        final int popSize = 1000;
+        final int maximumGenerations = 1000;
+        final int crossoverType = 1;
+        int[] crossoverRate = new int[] {100, 100, 90, 90, 90};
+        final int mutationType = 2;
+        int[] mutationRate = new int[] {0, 10, 0, 10, 15};
+        final int tournamentCandidateNum = 3;
+        final boolean print = false;
+        final boolean show = false;
+
+        // For each seed
+        for(int i=0; i<5; i++){
+            // Set the seed of this generation
+            Seeder.setSeed(i); // Doesn't need a 'new' constructor, set seed does that
+
+            // Keep track of our starting chromosomes
+            ArrayList<Chromosome> defaultChromosomeSet = initializeRandomStartingPopulation(popSize);
+
+            ArrayList<SeedStandardDTO> seedData = new ArrayList<>();
+            // For each iteration method
+            for (int j = 0; j < 5; j++) {
+                // Reset the default seed set so that we don't generate them every time
+                chromosomes.clear();
+                chromosomes.addAll(defaultChromosomeSet);
+
+                // Preform the 
+                preformGenerations(maximumGenerations, crossoverType, crossoverRate[i], mutationType, mutationRate[i], tournamentCandidateNum, print, show);
+            }
+        }
     }
 
     void runStandard() {
@@ -42,36 +81,16 @@ public class GAProj {
         chromosomes = initializeRandomStartingPopulation(fd.askForInt("Please enter population size:"));
 
         // Step 3: Evaluate, select, and mutate
-        runEval(fd.askForInt("Enter maximum chromosome generation:"));
+        runEval();
     }
 
-    // Runs evaluation simulation and selection based on existing cities and chromosomes
-    // - Evaluate fitness
-    // - Select new population using selections
-    // - Apply crossover and mutation
-    void runEval(int maximumGenerations) {
+    void preformGenerations(int maximumGenerations, int crossoverType, int crossoverRate, int mutationType, 
+                                int mutationRate, int tournamentCandidateNum, boolean print, boolean show){
+        cityLooker = new CityLooker(cities);
+        if(show) cityLooker.showWindow();
+        int finalSize = chromosomes.size();
         ArrayList<Float> avgPerGeneration = new ArrayList<>();
         ArrayList<Float> bestPerGeneration = new ArrayList<>();
-
-        int crossoverType = fd.askForType(
-                "Please choose an option for crossover type:\n" +
-                "[0] - UOX with bitmask\n" +
-                "[1] - PMX", 1);
-        int crossoverRate = fd.askForInt("Enter crossover rate in % (as an Integer)");
-        int mutationType = fd.askForType(
-                "Please choose an option for mutation type:\n" +
-                "[0] - Swap\n" +
-                "[1] - Scramble\n" +
-                "[2] - Inversion", 2);
-        int mutationRate = fd.askForInt("Enter mutation rate in % (as an Integer)");
-        int tournamentCandidateNum = fd.askForInt(
-                        "Tournament k (candidates)?" +
-                        "\nThis will also be the elitism size." +
-                        "\nElitism = numChromosomes  / numCandidates");
-        int finalSize = chromosomes.size();
-
-        cityLooker = new CityLooker(cities);
-        cityLooker.showWindow();
 
         for (int i = 0; i < maximumGenerations; i++) {
             // Evaluate fitness
@@ -98,9 +117,8 @@ public class GAProj {
 
             // Apply crossover and mutation
             // Choose which type of crossover is happening
-            Random crossoverRandom = new Random();
             for (int j = 0; j < (winners.size()-1) / 2 ; j += 2) { // Pick pairs
-                int r = crossoverRandom.nextInt(99) + 1; // [0...99] -> [1...100]
+                int r = Seeder.looseNextInt(99) + 1; // [0...99] -> [1...100]
                 if (r <= crossoverRate) { // Determine if that crossover happens
                     // Get the resulting crossed
                     Chromosome[] crossed = new Chromosome[2];
@@ -119,9 +137,8 @@ public class GAProj {
                 }
             }
             // Mutation
-            Random mutatorRandom = new Random();
             for (Chromosome chromosome : chromosomes) { // For each child
-                int r = mutatorRandom.nextInt(99) + 1; // [0...99] -> [1...100]
+                int r = Seeder.looseNextInt(99) + 1; // [0...99] -> [1...100]
                 if (r <= mutationRate) { // Determine if it mutates
                     if (mutationType == 0)
                         Mutation.swap(chromosome);
@@ -141,10 +158,37 @@ public class GAProj {
             // Finally, fill in the missing chromosomes to keep the same population size
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
-        // This is after all generations of the program have been completed
         TerminalControl.sendStatusMessage("Generations complete!");
-        ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
+        if(print){
+             // This is after all generations of the program have been completed
+            ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
                 mutationType, mutationRate, bestPerGeneration, avgPerGeneration, cities.size(), chromosomes.size());
+        }
+    }
+
+    // Runs evaluation simulation and selection based on existing cities and chromosomes
+    // - Evaluate fitness
+    // - Select new population using selections
+    // - Apply crossover and mutation
+    void runEval() {
+        int maximumGenerations = fd.askForInt("Enter maximum chromosome generation:");
+        int crossoverType = fd.askForType(
+                "Please choose an option for crossover type:\n" +
+                "[0] - UOX with bitmask\n" +
+                "[1] - PMX", 1);
+        int crossoverRate = fd.askForInt("Enter crossover rate in % (as an Integer)");
+        int mutationType = fd.askForType(
+                "Please choose an option for mutation type:\n" +
+                "[0] - Swap\n" +
+                "[1] - Scramble\n" +
+                "[2] - Inversion", 2);
+        int mutationRate = fd.askForInt("Enter mutation rate in % (as an Integer)");
+        int tournamentCandidateNum = fd.askForInt(
+                        "Tournament k (candidates)?" +
+                        "\nThis will also be the elitism size." +
+                        "\nElitism = numChromosomes  / numCandidates");
+        
+        preformGenerations(maximumGenerations, crossoverType, crossoverRate, mutationType, mutationRate, tournamentCandidateNum, true, true);
     }
 
     Chromosome bestOfTheBest() {
@@ -172,10 +216,9 @@ public class GAProj {
             Chromosome theBest = new Chromosome();
             // Find and fight contenders
             for (int i = 0; i < tournamentCandidateNum; i++) {
-                Chromosome fighter = chromosomes.remove(new Random().nextInt(chromosomes.size()));
-                if (fighter.score < theBest.score) {
+                Chromosome fighter = chromosomes.remove(Seeder.looseNextInt(chromosomes.size()));
+                if (fighter.score < theBest.score)
                     theBest = fighter;
-                }
             }
             // Winner has been decided
             winners.add(theBest);
@@ -218,11 +261,14 @@ public class GAProj {
         for (int i = 0; i < size; i++)
             present.add(i);
         // Randomize the list
-        Collections.shuffle(present);
+        //Collections.shuffle(present); Although this would be easiest, we need seed support
+        ArrayList<Integer> perfect = new ArrayList<>();
+        while(present.size()!=0){ // Remove them all in an order determined by the seed
+            perfect.add(present.remove(Seeder.nextInt(present.size())));// TODO check this to make sure it doesn't out of bounds
+        }
         // Return the resulting chromosome
-        // Function taken from https://www.geeksforgeeks.org/arraylist-array-conversion-java-toarray-methods/
-        // (I hope its efficient)
-        return new Chromosome(present.stream().mapToInt(i -> i).toArray());
+        // Return function taken from https://www.geeksforgeeks.org/arraylist-array-conversion-java-toarray-methods/
+        return new Chromosome(perfect.stream().mapToInt(i -> i).toArray());
     }
 
     // Displays the city data
