@@ -19,6 +19,7 @@ public class GAProj {
                     "[0] - Exit\n" +
                     "[1] - Run standard program\n" +
                     "[2] - Show last result (node network)", 2);
+            //TODO Make a 5 seed run of a set of runs
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
