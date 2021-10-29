@@ -20,7 +20,6 @@ public class GAProj {
                     "[1] - Run standard program\n" +
                     "[2] - Show last result (node network)" + 
                     "[3] - Run 5 seed set", 3);
-            //TODO Make a 5 seed run of a set of runs
             if (selection == 0) {
                 break;
             } else if (selection == 1) {
@@ -38,39 +37,55 @@ public class GAProj {
     }
 
     void runFiveSeedStandard(){
-
         // Input will be the same set of cities
         cities = fd.getCities();
         // Set the standard testing parameters for the standard 5 seed output
         final int popSize = 1000;
         final int maximumGenerations = 1000;
         final int crossoverType = 1;
-        int[] crossoverRate = new int[] {100, 100, 90, 90, 90};
+        final int[] crossoverRate = new int[] {100, 100, 90, 90, 90};
         final int mutationType = 2;
-        int[] mutationRate = new int[] {0, 10, 0, 10, 15};
+        final int[] mutationRate = new int[] {0, 10, 0, 10, 15};
         final int tournamentCandidateNum = 3;
         final boolean print = false;
         final boolean show = false;
+        ArrayList<ArrayList<SeedStandardDTO>> finalSeedData = new ArrayList<>();
 
         // For each seed
         for(int i=0; i<5; i++){
             // Set the seed of this generation
-            Seeder.setSeed(i); // Doesn't need a 'new' constructor, set seed does that
+            Seeder.setSeed(i); // Doesn't need a 'new' constructor, set seed does that naturally
 
-            // Keep track of our starting chromosomes
+            // Keep track of our starting chromosomes for reuse (we don't really need to do this, but its efficient)
             ArrayList<Chromosome> defaultChromosomeSet = initializeRandomStartingPopulation(popSize);
 
+            // Keep track of each seed data provided by the different attempts
             ArrayList<SeedStandardDTO> seedData = new ArrayList<>();
-            // For each iteration method
+            // For each iteration method (crossover type and
             for (int j = 0; j < 5; j++) {
                 // Reset the default seed set so that we don't generate them every time
                 chromosomes.clear();
                 chromosomes.addAll(defaultChromosomeSet);
 
-                // Preform the 
-                preformGenerations(maximumGenerations, crossoverType, crossoverRate[i], mutationType, mutationRate[i], tournamentCandidateNum, print, show);
+                // Preform the generation and store the data used from it
+                SeedStandardDTO dto = preformGenerations(maximumGenerations, crossoverType, crossoverRate[j],
+                        mutationType, mutationRate[j], tournamentCandidateNum, print, show);
+                dto.seedNum = i; // I made a boo-boo and this is the laziest way to fix it
+                seedData.add(dto);
             }
+            // After all 5 runs on that seed, add the list to the final data
+            finalSeedData.add(seedData);
         }
+
+        // We now have 5 data sets of each 5 runtime parameters, print them
+        ReportWriter.printSeedResults(finalSeedData);
+
+        // Just to clarify what is stored in the finalSeedData:
+        // It is a list of lists of seed data objects
+        // A seed data object contains everything that I could think of that would be useful during a generation set
+        // Each list of seed data are the different parameters
+        // This means that finalSeedData.get(0).get(0) would get the the 0th entry (c=100,m=0) of the 0th seed
+        // In essence, [i,j] is [seedNum,iterationDetails]
     }
 
     void runStandard() {
@@ -84,7 +99,7 @@ public class GAProj {
         runEval();
     }
 
-    void preformGenerations(int maximumGenerations, int crossoverType, int crossoverRate, int mutationType, 
+    SeedStandardDTO preformGenerations(int maximumGenerations, int crossoverType, int crossoverRate, int mutationType,
                                 int mutationRate, int tournamentCandidateNum, boolean print, boolean show){
         cityLooker = new CityLooker(cities);
         if(show) cityLooker.showWindow();
@@ -164,6 +179,8 @@ public class GAProj {
             ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
                 mutationType, mutationRate, bestPerGeneration, avgPerGeneration, cities.size(), chromosomes.size());
         }
+        ArrayList<Chromosome> finalList = new ArrayList<>(chromosomes);
+        return new SeedStandardDTO(chromosomes.size(), maximumGenerations, crossoverType, crossoverRate, mutationType, mutationRate, tournamentCandidateNum, finalList, avgPerGeneration, bestPerGeneration, -1);
     }
 
     // Runs evaluation simulation and selection based on existing cities and chromosomes
@@ -264,7 +281,7 @@ public class GAProj {
         //Collections.shuffle(present); Although this would be easiest, we need seed support
         ArrayList<Integer> perfect = new ArrayList<>();
         while(present.size()!=0){ // Remove them all in an order determined by the seed
-            perfect.add(present.remove(Seeder.nextInt(present.size())));// TODO check this to make sure it doesn't out of bounds
+            perfect.add(present.remove(Seeder.nextInt(present.size())));
         }
         // Return the resulting chromosome
         // Return function taken from https://www.geeksforgeeks.org/arraylist-array-conversion-java-toarray-methods/
