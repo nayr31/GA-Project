@@ -63,6 +63,8 @@ public class TerminalControl extends JFrame {
         commandsReceivedArea.setText(text);
     }
 
+    static void clearCommandText(){commandsReceivedArea.setText("");}
+
     static void sendStatusMessage(String text){
         statusArea.setText(text);
     }

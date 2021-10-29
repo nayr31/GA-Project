@@ -1,0 +1,298 @@
+File: test2.txt
+Number of cities: 51
+Number of chromosomes: 1000
+Number of generations: 1000
+Tournament candidates: 3
+------------Printing per seed per iteration data...------------
+-------Seed: 0
+-----------Iteration: 0
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1246.0771
+Best distance of first generation: 1278.0858
+Best distance of last generation: 585.2723
+-----------Iteration: 1
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1212.9409
+Best distance of first generation: 1278.0858
+Best distance of last generation: 475.56552
+-----------Iteration: 2
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1294.6273
+Best distance of first generation: 1278.0858
+Best distance of last generation: 677.961
+-----------Iteration: 3
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1234.112
+Best distance of first generation: 1278.0858
+Best distance of last generation: 456.10257
+-----------Iteration: 4
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1257.5814
+Best distance of first generation: 1278.0858
+Best distance of last generation: 527.3888
+-------Seed: 1
+-----------Iteration: 0
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1618.3511
+Average distance of last generation: 1226.4174
+Best distance of first generation: 1328.5977
+Best distance of last generation: 576.12695
+-----------Iteration: 1
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1618.3511
+Average distance of last generation: 1234.6057
+Best distance of first generation: 1328.5977
+Best distance of last generation: 473.08212
+-----------Iteration: 2
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1618.3511
+Average distance of last generation: 1305.2401
+Best distance of first generation: 1328.5977
+Best distance of last generation: 622.83386
+-----------Iteration: 3
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1618.3511
+Average distance of last generation: 1226.5664
+Best distance of first generation: 1328.5977
+Best distance of last generation: 452.25702
+-----------Iteration: 4
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1618.3511
+Average distance of last generation: 1254.6372
+Best distance of first generation: 1328.5977
+Best distance of last generation: 453.18503
+-------Seed: 2
+-----------Iteration: 0
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1273.2161
+Best distance of first generation: 1334.8676
+Best distance of last generation: 636.22577
+-----------Iteration: 1
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1216.1995
+Best distance of first generation: 1334.8676
+Best distance of last generation: 464.92432
+-----------Iteration: 2
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1309.3065
+Best distance of first generation: 1334.8676
+Best distance of last generation: 664.04803
+-----------Iteration: 3
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1253.0071
+Best distance of first generation: 1334.8676
+Best distance of last generation: 473.5
+-----------Iteration: 4
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1268.5564
+Best distance of first generation: 1334.8676
+Best distance of last generation: 432.25522
+-------Seed: 3
+-----------Iteration: 0
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1617.7871
+Average distance of last generation: 1267.8016
+Best distance of first generation: 1323.0488
+Best distance of last generation: 599.53485
+-----------Iteration: 1
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1617.7871
+Average distance of last generation: 1239.8221
+Best distance of first generation: 1323.0488
+Best distance of last generation: 504.99313
+-----------Iteration: 2
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1617.7871
+Average distance of last generation: 1307.6252
+Best distance of first generation: 1323.0488
+Best distance of last generation: 677.36896
+-----------Iteration: 3
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1617.7871
+Average distance of last generation: 1238.9312
+Best distance of first generation: 1323.0488
+Best distance of last generation: 436.64148
+-----------Iteration: 4
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1617.7871
+Average distance of last generation: 1230.6227
+Best distance of first generation: 1323.0488
+Best distance of last generation: 477.7282
+-------Seed: 4
+-----------Iteration: 0
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1623.9934
+Average distance of last generation: 1252.1881
+Best distance of first generation: 1371.2717
+Best distance of last generation: 579.2031
+-----------Iteration: 1
+Crossover type: PMX
+Crossover rate: 100%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1623.9934
+Average distance of last generation: 1197.3507
+Best distance of first generation: 1371.2717
+Best distance of last generation: 473.31454
+-----------Iteration: 2
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 0%
+--------------Results-------------
+Average distance of first generation: 1623.9934
+Average distance of last generation: 1278.2323
+Best distance of first generation: 1371.2717
+Best distance of last generation: 596.11896
+-----------Iteration: 3
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1623.9934
+Average distance of last generation: 1245.4889
+Best distance of first generation: 1371.2717
+Best distance of last generation: 499.8299
+-----------Iteration: 4
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1623.9934
+Average distance of last generation: 1241.3876
+Best distance of first generation: 1371.2717
+Best distance of last generation: 466.0576
+------------Finished writing per iteration data.------------
+The following are analysis vectors of the written data.
+The best iteration details: ---------
+Best value: 432.25522 was generated at generation 744
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 15%
+--------------Results-------------
+Average distance of first generation: 1620.526
+Average distance of last generation: 1268.5564
+Best distance of first generation: 1334.8676
+Best distance of last generation: 432.25522
+
+Average of vectors over a 5 set seed: 
+Crossover 100% No Mutation:  ---------
+Average of all last averages: 1253.14
+Average of all last bests: 595.2726
+Average generation of best generation score (it stopped getting better): 922
+Crossover 100% Inversion 10%:  ---------
+Average of all last averages: 1220.1838
+Average of all last bests: 478.37592
+Average generation of best generation score (it stopped getting better): 943
+Crossover 90% No Mutation:  ---------
+Average of all last averages: 1299.0062
+Average of all last bests: 647.66614
+Average generation of best generation score (it stopped getting better): 938
+Crossover 90% Inversion 10%:  ---------
+Average of all last averages: 1239.6211
+Average of all last bests: 463.6662
+Average generation of best generation score (it stopped getting better): 900
+Crossover 90% Inversion 15%:  ---------
+Average of all last averages: 1250.5571
+Average of all last bests: 471.323
+Average generation of best generation score (it stopped getting better): 828
+1
+etter): 910

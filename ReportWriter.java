@@ -66,18 +66,56 @@ public class ReportWriter {
         for (ArrayList<SeedStandardDTO> finalSeedDatum : finalSeedData) {
             for (SeedStandardDTO seedStandardDTO : finalSeedDatum) {
                 if (theBestIteration == null) theBestIteration = seedStandardDTO;
-                else {
-                    float bestOfResult = seedStandardDTO.getTheBest();
-                    if (bestOfResult < theBestIteration.getTheBest())
+                else if (seedStandardDTO.getTheBest() < theBestIteration.getTheBest())
                         theBestIteration = seedStandardDTO;
-                }
             }
         }
         lines.add("The best iteration details: ---------");
         assert theBestIteration != null;
+        lines.add(theBestIteration.printTheBest());
         lines.add(theBestIteration.toString());
+
+        lines.add("Average of vectors over a 5 set seed: ");
+        // Averages and bests of the different types
+        lines.add("Crossover 100% No Mutation:  ---------"); // Index 0 from each seed
+        lines.addAll(buildAveragesOnSeed(0, finalSeedData));
+        lines.add("Crossover 100% Inversion 10%:  ---------"); // Index 1 from each seed
+        lines.addAll(buildAveragesOnSeed(1, finalSeedData));
+        lines.add("Crossover 90% No Mutation:  ---------"); // Index 2 from each seed
+        lines.addAll(buildAveragesOnSeed(2, finalSeedData));
+        lines.add("Crossover 90% Inversion 10%:  ---------"); // Index 3 from each seed
+        lines.addAll(buildAveragesOnSeed(3, finalSeedData));
+        lines.add("Crossover 90% Inversion 15%:  ---------"); // Index 4 from each seed
+        lines.addAll(buildAveragesOnSeed(4, finalSeedData));
+
+        //TODO figure out where this is re-creating the printresults
         ReportWriter.print(lines, "fiveSeedStandardReport.txt");
-        //TODO make averages for each iteration type
+    }
+
+    private static ArrayList<String> buildAveragesOnSeed(int seedIndex,
+                                                         ArrayList<ArrayList<SeedStandardDTO>> finalSeedData){
+        ArrayList<String> lines = new ArrayList<>();
+        int length = finalSeedData.size();
+
+        float avgSeedDataVal = 0;
+        float bestSeedDataVal = 0;
+        int genOfBestAvg = 0;
+        for (ArrayList<SeedStandardDTO> finalSeedDatum : finalSeedData) {
+            SeedStandardDTO seedStandardDTO = finalSeedDatum.get(seedIndex);
+            float lastAvg = seedStandardDTO.avgPerGeneration.get(seedStandardDTO.avgPerGeneration.size() - 1);
+            avgSeedDataVal += lastAvg;
+            float lastBest = seedStandardDTO.bestPerGeneration.get(seedStandardDTO.bestPerGeneration.size() - 1);
+            bestSeedDataVal += lastBest;
+            int bestGen = seedStandardDTO.getTheBestGen();
+            genOfBestAvg += bestGen;
+        }
+        avgSeedDataVal = avgSeedDataVal / length;
+        bestSeedDataVal = bestSeedDataVal / length;
+        genOfBestAvg = genOfBestAvg / length;
+        lines.add("Average of all last averages: " + avgSeedDataVal);
+        lines.add("Average of all last bests: " + bestSeedDataVal);
+        lines.add("Average generation of best generation score (it stopped getting better): " + genOfBestAvg);
+        return lines;
     }
 
     private static void print(ArrayList<String> lines, String title) {

@@ -1,3 +1,4 @@
+import java.awt.desktop.SystemEventListener;
 import java.util.ArrayList;
 
 // Main class
@@ -18,7 +19,7 @@ public class GAProj {
                     "Please choose an option:\n" +
                     "[0] - Exit\n" +
                     "[1] - Run standard program\n" +
-                    "[2] - Show last result (node network)" + 
+                    "[2] - Show last result (node network)\n" +
                     "[3] - Run 5 seed set", 3);
             if (selection == 0) {
                 break;
@@ -31,9 +32,9 @@ public class GAProj {
                     TerminalControl.sendStatusMessage("No last result present!");
             } else if (selection == 3){
                 runFiveSeedStandard();
+                break;
             }
         }
-        TerminalControl.sendStatusMessage("No longer receiving inputs.\nHave a nice day.");
     }
 
     void runFiveSeedStandard(){
@@ -50,9 +51,13 @@ public class GAProj {
         final boolean print = false;
         final boolean show = false;
         ArrayList<ArrayList<SeedStandardDTO>> finalSeedData = new ArrayList<>();
+        chromosomes = new ArrayList<>();
 
+        TerminalControl.sendStatusMessage("Starting generation of seeds...");
+        TerminalControl.clearCommandText();
         // For each seed
         for(int i=0; i<5; i++){
+            float timer = System.nanoTime();
             // Set the seed of this generation
             Seeder.setSeed(i); // Doesn't need a 'new' constructor, set seed does that naturally
 
@@ -75,8 +80,10 @@ public class GAProj {
             }
             // After all 5 runs on that seed, add the list to the final data
             finalSeedData.add(seedData);
+            float delta = (System.nanoTime() - timer)/1000000;
+            TerminalControl.sendStatusMessage("Generation of seed " + (i+1) + " finished in " + delta + "ms.");
         }
-
+        TerminalControl.sendStatusMessage("Finished seed generation, printing data...");
         // We now have 5 data sets of each 5 runtime parameters, print them
         ReportWriter.printSeedResults(finalSeedData);
 
@@ -173,8 +180,8 @@ public class GAProj {
             // Finally, fill in the missing chromosomes to keep the same population size
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
-        TerminalControl.sendStatusMessage("Generations complete!");
         if(print){
+            TerminalControl.sendStatusMessage("Generations complete!");
              // This is after all generations of the program have been completed
             ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
                 mutationType, mutationRate, bestPerGeneration, avgPerGeneration, cities.size(), chromosomes.size());

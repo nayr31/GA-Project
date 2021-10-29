@@ -13,6 +13,7 @@ class SeedStandardDTO{
     ArrayList<Float> bestPerGeneration;
     long seedNum;
     private float theBest = -1;
+    private int genOfFirstBest = -1;
 
     public SeedStandardDTO(int popSize, int maximumGenerations, int crossoverType, int crossoverRate, int mutationType, int mutationRate, int tournamentCandidateNum, ArrayList<Chromosome> finalChromosomeList, ArrayList<Float> avgPerGeneration, ArrayList<Float> bestPerGeneration, long seedNum) {
         this.popSize = popSize;
@@ -30,17 +31,32 @@ class SeedStandardDTO{
 
     float getTheBest(){
         if(theBest == -1)
-            theBest = genBest();
+            genBest();
         return theBest;
     }
 
-    private float genBest(){
+    int getTheBestGen(){
+        if(theBest == -1)
+            genBest();
+        return genOfFirstBest;
+    }
+
+    String printTheBest(){
+        if(theBest == -1)
+            genBest();
+        return "Best value: " + theBest + " was generated at generation " + genOfFirstBest;
+    }
+
+    private void genBest(){
         float theBest = 99999;
-        for (Float aFloat : bestPerGeneration) {
-            if (aFloat < theBest)
+        for (int i = 0; i < bestPerGeneration.size(); i++) {
+            float aFloat = bestPerGeneration.get(i);
+            if (aFloat < theBest) {
                 theBest = aFloat;
+                genOfFirstBest = i;
+            }
         }
-        return theBest;
+        this.theBest = theBest;
     }
 
     public String toString(){
