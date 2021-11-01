@@ -1,0 +1,37 @@
+Number of cities: 51
+Number of chromosomes: 1000
+Number of generations: 1000
+Tournament candidates: 3
+The best iteration details: ---------
+Best value: 451.32507 was generated at generation 997
+Crossover type: PMX
+Crossover rate: 90%
+Mutation type: Inversion
+Mutation rate: 10%
+--------------Results-------------
+Average distance of first generation: 1624.365
+Average distance of last generation: 1223.3491
+Best distance of first generation: 1278.0858
+Best distance of last generation: 451.32507
+
+Average of vectors over a 5 set seed: 
+Crossover 100% No Mutation:  ---------
+Average of all last averages: 1237.5344
+Average of all last bests: 568.29565
+Average generation of best generation score (it stopped getting better): 843
+Crossover 100% Inversion 10%:  ---------
+Average of all last averages: 1213.9818
+Average of all last bests: 476.3355
+Average generation of best generation score (it stopped getting better): 880
+Crossover 90% No Mutation:  ---------
+Average of all last averages: 1280.4227
+Average of all last bests: 604.17786
+Average generation of best generation score (it stopped getting better): 901
+Crossover 90% Inversion 10%:  ---------
+Average of all last averages: 1251.2523
+Average of all last bests: 490.83682
+Average generation of best generation score (it stopped getting better): 948
+Crossover 90% Inversion 15%:  ---------
+Average of all last averages: 1250.4169
+Average of all last bests: 480.8697
+Average generation of best generation score (it stopped getting better): 928

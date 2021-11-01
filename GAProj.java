@@ -32,7 +32,6 @@ public class GAProj {
                     TerminalControl.sendStatusMessage("No last result present!");
             } else if (selection == 3){
                 runFiveSeedStandard();
-                break;
             }
         }
     }
@@ -180,13 +179,14 @@ public class GAProj {
             // Finally, fill in the missing chromosomes to keep the same population size
             chromosomes.addAll(generateXChromosomes(finalSize - chromosomes.size(), cities.size()));
         }
-        if(print){
+        // This is after all generations of the program have been completed
+        if(print){ // This part is for the single run standard experiment
             TerminalControl.sendStatusMessage("Generations complete!");
-             // This is after all generations of the program have been completed
             ReportWriter.printResults(maximumGenerations, tournamentCandidateNum, crossoverType, crossoverRate,
                 mutationType, mutationRate, bestPerGeneration, avgPerGeneration, cities.size(), chromosomes.size());
         }
         ArrayList<Chromosome> finalList = new ArrayList<>(chromosomes);
+        // Return all information generated from this experiment
         return new SeedStandardDTO(chromosomes.size(), maximumGenerations, crossoverType, crossoverRate, mutationType, mutationRate, tournamentCandidateNum, finalList, avgPerGeneration, bestPerGeneration, -1);
     }
 

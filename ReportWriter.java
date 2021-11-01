@@ -34,33 +34,36 @@ public class ReportWriter {
     }
 
     public static void printSeedResults(ArrayList<ArrayList<SeedStandardDTO>> finalSeedData) {
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add("File: " + FileDecoder.filename);
-        lines.add("Number of cities: " + finalSeedData.get(0).get(0).finalChromosomeList.get(0).data.length);
-        lines.add("Number of chromosomes: " + finalSeedData.get(0).get(0).finalChromosomeList.size());
-        lines.add("Number of generations: " + finalSeedData.get(0).get(0).avgPerGeneration.size());
-        lines.add("Tournament candidates: " + finalSeedData.get(0).get(0).tournamentCandidateNum);
-        lines.add("------------Printing per seed per iteration data...------------");
+        ArrayList<String> fullLines = new ArrayList<>();
+        ArrayList<String> shortLines = new ArrayList<>();
+        fullLines.add("File: " + FileDecoder.filename);
+        doubleAdd(fullLines,  shortLines, "Number of cities: " + finalSeedData.get(0).get(0).finalChromosomeList.get(0).data.length);
+        doubleAdd(fullLines,  shortLines, "Number of chromosomes: " + finalSeedData.get(0).get(0).finalChromosomeList.size());
+        doubleAdd(fullLines,  shortLines, "Number of generations: " + finalSeedData.get(0).get(0).avgPerGeneration.size());
+        doubleAdd(fullLines,  shortLines, "Tournament candidates: " + finalSeedData.get(0).get(0).tournamentCandidateNum);
+        //doubleAdd(fullLines,  shortLines, "");
+
+        fullLines.add("------------Printing per seed per iteration data...------------");
         // For each seed
         for (int i = 0; i < finalSeedData.size(); i++) {
-            lines.add("-------Seed: " + i);
+            fullLines.add("-------Seed: " + i);
             // For each iteration type
             for (int j = 0; j < finalSeedData.get(i).size(); j++) {
-                lines.add("-----------Iteration: " + j);
+                fullLines.add("-----------Iteration: " + j);
                 SeedStandardDTO seedData = finalSeedData.get(i).get(j);
-                lines.add("Crossover type: " + (seedData.crossoverType == 0 ? "UOX with bitmask" : "PMX"));
-                lines.add("Crossover rate: " + seedData.crossoverRate + "%");
-                lines.add("Mutation type: " + (seedData.mutationType == 0 ? "Swap" : seedData.mutationType == 1 ? "Scramble" : "Inversion"));
-                lines.add("Mutation rate: " + seedData.mutationRate + "%");
-                lines.add("--------------Results-------------");
-                lines.add("Average distance of first generation: " + seedData.avgPerGeneration.get(0));
-                lines.add("Average distance of last generation: " + seedData.avgPerGeneration.get(seedData.avgPerGeneration.size()-1));
-                lines.add("Best distance of first generation: " + seedData.bestPerGeneration.get(0));
-                lines.add("Best distance of last generation: " + seedData.bestPerGeneration.get(seedData.bestPerGeneration.size()-1));
+                fullLines.add("Crossover type: " + (seedData.crossoverType == 0 ? "UOX with bitmask" : "PMX"));
+                fullLines.add("Crossover rate: " + seedData.crossoverRate + "%");
+                fullLines.add("Mutation type: " + (seedData.mutationType == 0 ? "Swap" : seedData.mutationType == 1 ? "Scramble" : "Inversion"));
+                fullLines.add("Mutation rate: " + seedData.mutationRate + "%");
+                fullLines.add("--------------Results-------------");
+                fullLines.add("Average distance of first generation: " + seedData.avgPerGeneration.get(0));
+                fullLines.add("Average distance of last generation: " + seedData.avgPerGeneration.get(seedData.avgPerGeneration.size()-1));
+                fullLines.add("Best distance of first generation: " + seedData.bestPerGeneration.get(0));
+                fullLines.add("Best distance of last generation: " + seedData.bestPerGeneration.get(seedData.bestPerGeneration.size()-1));
             }
         }
-        lines.add("------------Finished writing per iteration data.------------");
-        lines.add("The following are analysis vectors of the written data.");
+        fullLines.add("------------Finished writing per iteration data.------------");
+        fullLines.add("The following are analysis vectors of the written data.");
         // Best iteration data
         SeedStandardDTO theBestIteration = null;
         for (ArrayList<SeedStandardDTO> finalSeedDatum : finalSeedData) {
@@ -70,26 +73,37 @@ public class ReportWriter {
                         theBestIteration = seedStandardDTO;
             }
         }
-        lines.add("The best iteration details: ---------");
+        doubleAdd(fullLines,  shortLines, "The best iteration details: ---------");
         assert theBestIteration != null;
-        lines.add(theBestIteration.printTheBest());
-        lines.add(theBestIteration.toString());
+        doubleAdd(fullLines,  shortLines, theBestIteration.printTheBest());
+        doubleAdd(fullLines,  shortLines, theBestIteration.toString());
 
-        lines.add("Average of vectors over a 5 set seed: ");
+        //doubleAdd(fullLines,  shortLines, );
+        doubleAdd(fullLines,  shortLines, "Average of vectors over a 5 set seed: ");
         // Averages and bests of the different types
-        lines.add("Crossover 100% No Mutation:  ---------"); // Index 0 from each seed
-        lines.addAll(buildAveragesOnSeed(0, finalSeedData));
-        lines.add("Crossover 100% Inversion 10%:  ---------"); // Index 1 from each seed
-        lines.addAll(buildAveragesOnSeed(1, finalSeedData));
-        lines.add("Crossover 90% No Mutation:  ---------"); // Index 2 from each seed
-        lines.addAll(buildAveragesOnSeed(2, finalSeedData));
-        lines.add("Crossover 90% Inversion 10%:  ---------"); // Index 3 from each seed
-        lines.addAll(buildAveragesOnSeed(3, finalSeedData));
-        lines.add("Crossover 90% Inversion 15%:  ---------"); // Index 4 from each seed
-        lines.addAll(buildAveragesOnSeed(4, finalSeedData));
+        doubleAdd(fullLines,  shortLines, "Crossover 100% No Mutation:  ---------");
+        doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(0, finalSeedData));
+        doubleAdd(fullLines,  shortLines, "Crossover 100% Inversion 10%:  ---------");
+        doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(1, finalSeedData));
+        doubleAdd(fullLines,  shortLines, "Crossover 90% No Mutation:  ---------");
+        doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(2, finalSeedData));
+        doubleAdd(fullLines,  shortLines, "Crossover 90% Inversion 10%:  ---------");
+        doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(3, finalSeedData));
+        doubleAdd(fullLines,  shortLines, "Crossover 90% Inversion 15%:  ---------");
+        doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(4, finalSeedData));
 
-        //TODO figure out where this is re-creating the printresults
-        ReportWriter.print(lines, "fiveSeedStandardReport.txt");
+        ReportWriter.print(fullLines, "fiveSeedStandardFullReport.txt");
+        ReportWriter.print(shortLines, "fiveSeedStandardShortReport.txt");
+    }
+
+    private static void doubleAddAll(ArrayList<String> lines1, ArrayList<String> lines2, ArrayList<String> strings){
+        lines1.addAll(strings);
+        lines2.addAll(strings);
+    }
+
+    private static void doubleAdd(ArrayList<String> lines1, ArrayList<String> lines2, String string){
+        lines1.add(string);
+        lines2.add(string);
     }
 
     private static ArrayList<String> buildAveragesOnSeed(int seedIndex,
