@@ -78,9 +78,9 @@ public class Crossover {
         Object[] lookupC2 = new Object[child2.length];
 
         // This will always take half of the chromosome, but it should differ
-        int swathSzie = parent1.data.length/2; // Get the size of the swath we are using
-        int startPoint = new Random().nextInt(swathSzie-1); // The start will be in the first half
-        int endPoint = startPoint + swathSzie; // The end will be plus the swath
+        int swathSize = parent1.data.length/2; // Get the size of the swath we are using
+        int startPoint = new Random().nextInt(swathSize-1); // The start will be in the first half
+        int endPoint = startPoint + swathSize; // The end will be plus the swath
 
         // Copy the parents
         for (int i = 0; i < parent1.data.length; i++) {
@@ -93,7 +93,7 @@ public class Crossover {
 
         // For the points in the swath
         for (int i = startPoint; i < endPoint ; i++) {
-            int j = i % parent1.data.length;
+            int j = i;// % parent1.data.length; // This will always equal i
 
             // Find the index that was used in that order and store it
             int bucketIndex = (int) lookupC1[parent2.data[i]];
@@ -104,7 +104,7 @@ public class Crossover {
             // Store the new other value
             lookupC1[(int) child1[bucketIndex]] = bucketIndex;
 
-            // Do the same for the other
+            // Do the same for the other child
             bucketIndex = (int) lookupC2[parent1.data[i]];
             bucket = child2[bucketIndex];
             child2[bucketIndex] = child2[j];

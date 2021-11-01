@@ -31,6 +31,8 @@ public class Mutation {
 
     // Common mutation method used between scramble and inversion
     static private void commonMutate(Chromosome chromosome, String type){
+        //TODO Make these do wrap instead of range (I think it has something to do with [%])
+        // Then figure out if it would actually be worth the hassle performance wise or just make the code shorter
         Random r = new Random();
 
         // Get a range in the sequence that is between 1/4 and 1/3 of the length of the sequence

@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact name="Project">
+    <output-path>$PROJECT_DIR$/out/artifacts/Project</output-path>
+    <root id="root">
+      <element id="archive" name="GA-Project.jar">
+        <element id="module-output" name="GA-Project" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/MANIFEST.MF" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

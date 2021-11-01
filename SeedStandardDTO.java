@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+// Stores the generation iteration data from the program
+// This records all data relevant to the gentic algorithm
+// This is stored 5 times for averages per seed, after 5 seeds there are 25 of these per required crossover/mutation set
 class SeedStandardDTO{
     int popSize;
     int maximumGenerations;
@@ -14,6 +17,7 @@ class SeedStandardDTO{
     long seedNum;
     private float theBest = -1;
     private int genOfFirstBest = -1;
+    private float valOfFirstBest = 9999999;
 
     public SeedStandardDTO(int popSize, int maximumGenerations, int crossoverType, int crossoverRate, int mutationType, int mutationRate, int tournamentCandidateNum, ArrayList<Chromosome> finalChromosomeList, ArrayList<Float> avgPerGeneration, ArrayList<Float> bestPerGeneration, long seedNum) {
         this.popSize = popSize;
@@ -41,19 +45,33 @@ class SeedStandardDTO{
         return genOfFirstBest;
     }
 
+    float getValOfFirstBest(){
+        if(theBest == -1)
+            genBest();
+        return valOfFirstBest;
+    }
+
+    // Returns a string of the best value and first bet values
     String printTheBest(){
         if(theBest == -1)
             genBest();
-        return "Best value: " + theBest + " was generated at generation " + genOfFirstBest;
+        return "Best value: " + theBest + ". " +
+                "Last best was generated at generation " + genOfFirstBest + " with value " + valOfFirstBest;
     }
 
+    // Finds the best overall value
+    //  and the point at which the program stagnates and stops generating sufficiently better solutions
     private void genBest(){
         float theBest = 99999;
         for (int i = 0; i < bestPerGeneration.size(); i++) {
             float aFloat = bestPerGeneration.get(i);
             if (aFloat < theBest) {
                 theBest = aFloat;
-                genOfFirstBest = i;
+                // This next part checks to see if the last best value are at least better by 10%
+                if(valOfFirstBest/aFloat > 1.1){
+                    genOfFirstBest = i;
+                    valOfFirstBest = aFloat;
+                }
             }
         }
         this.theBest = theBest;
@@ -64,6 +82,7 @@ class SeedStandardDTO{
         StringBuilder builder = new StringBuilder();
         for (String line : lines)
             builder.append(line).append("\n");
+        builder.append("Stopped improving at generation: ").append(genOfFirstBest);
         return builder.toString();
     }
 

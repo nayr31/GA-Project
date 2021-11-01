@@ -7,6 +7,8 @@ import java.util.ArrayList;
 // This class handles writing the report given a set of data
 public class ReportWriter {
 
+    // Used to generate a single file for testing purposes (in the option run standard)
+    // This was used to generate the graphs
     static void printResults(int maxGen, int k, int crossoverType, int crossoverRate, int mutationType,
                              int mutationRate, ArrayList<Float> bestPerGeneration, ArrayList<Float> avgPerGeneration,
                              int numCities, int numChromosomes) {
@@ -33,16 +35,19 @@ public class ReportWriter {
         ReportWriter.print(lines, title + ".txt");
     }
 
+    // Prints the results of a five seed standard
+    // The ArrayList<ArrayList<SeedStandardDTO>> stores 5 items, each an ArrayList<SeedStandardDTO> of a seed
+    // This way, we can preform 5 seeds, of 5 generation iterations, getting 5 results of a single seed input data
     public static void printSeedResults(ArrayList<ArrayList<SeedStandardDTO>> finalSeedData) {
         ArrayList<String> fullLines = new ArrayList<>();
         ArrayList<String> shortLines = new ArrayList<>();
-        fullLines.add("File: " + FileDecoder.filename);
+        doubleAdd(fullLines, shortLines, "File: " + FileDecoder.filename);
         doubleAdd(fullLines,  shortLines, "Number of cities: " + finalSeedData.get(0).get(0).finalChromosomeList.get(0).data.length);
         doubleAdd(fullLines,  shortLines, "Number of chromosomes: " + finalSeedData.get(0).get(0).finalChromosomeList.size());
         doubleAdd(fullLines,  shortLines, "Number of generations: " + finalSeedData.get(0).get(0).avgPerGeneration.size());
         doubleAdd(fullLines,  shortLines, "Tournament candidates: " + finalSeedData.get(0).get(0).tournamentCandidateNum);
-        //doubleAdd(fullLines,  shortLines, "");
 
+        // The full lines list differs by printing the results of every seed generation iteration data
         fullLines.add("------------Printing per seed per iteration data...------------");
         // For each seed
         for (int i = 0; i < finalSeedData.size(); i++) {
@@ -63,7 +68,6 @@ public class ReportWriter {
             }
         }
         fullLines.add("------------Finished writing per iteration data.------------");
-        fullLines.add("The following are analysis vectors of the written data.");
         // Best iteration data
         SeedStandardDTO theBestIteration = null;
         for (ArrayList<SeedStandardDTO> finalSeedDatum : finalSeedData) {
@@ -78,8 +82,7 @@ public class ReportWriter {
         doubleAdd(fullLines,  shortLines, theBestIteration.printTheBest());
         doubleAdd(fullLines,  shortLines, theBestIteration.toString());
 
-        //doubleAdd(fullLines,  shortLines, );
-        doubleAdd(fullLines,  shortLines, "Average of vectors over a 5 set seed: ");
+        doubleAdd(fullLines,  shortLines, "-------------Average of vectors over a 5 set seed-------------");
         // Averages and bests of the different types
         doubleAdd(fullLines,  shortLines, "Crossover 100% No Mutation:  ---------");
         doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(0, finalSeedData));
@@ -92,20 +95,24 @@ public class ReportWriter {
         doubleAdd(fullLines,  shortLines, "Crossover 90% Inversion 15%:  ---------");
         doubleAddAll(fullLines,  shortLines, buildAveragesOnSeed(4, finalSeedData));
 
+        // Print the full and short details of the results
         ReportWriter.print(fullLines, "fiveSeedStandardFullReport.txt");
         ReportWriter.print(shortLines, "fiveSeedStandardShortReport.txt");
     }
 
+    // Adds a list of strings to two different lists of strings
     private static void doubleAddAll(ArrayList<String> lines1, ArrayList<String> lines2, ArrayList<String> strings){
         lines1.addAll(strings);
         lines2.addAll(strings);
     }
 
+    // Adds a string to two different lists of strings
     private static void doubleAdd(ArrayList<String> lines1, ArrayList<String> lines2, String string){
         lines1.add(string);
         lines2.add(string);
     }
 
+    // Returns a list of lines that pertains to average information about a seed data seed number
     private static ArrayList<String> buildAveragesOnSeed(int seedIndex,
                                                          ArrayList<ArrayList<SeedStandardDTO>> finalSeedData){
         ArrayList<String> lines = new ArrayList<>();
@@ -114,6 +121,7 @@ public class ReportWriter {
         float avgSeedDataVal = 0;
         float bestSeedDataVal = 0;
         int genOfBestAvg = 0;
+        float valOfBestAvg = 0;
         for (ArrayList<SeedStandardDTO> finalSeedDatum : finalSeedData) {
             SeedStandardDTO seedStandardDTO = finalSeedDatum.get(seedIndex);
             float lastAvg = seedStandardDTO.avgPerGeneration.get(seedStandardDTO.avgPerGeneration.size() - 1);
@@ -122,16 +130,21 @@ public class ReportWriter {
             bestSeedDataVal += lastBest;
             int bestGen = seedStandardDTO.getTheBestGen();
             genOfBestAvg += bestGen;
+            float firstGen = seedStandardDTO.getValOfFirstBest();
+            valOfBestAvg += firstGen;
         }
         avgSeedDataVal = avgSeedDataVal / length;
         bestSeedDataVal = bestSeedDataVal / length;
         genOfBestAvg = genOfBestAvg / length;
+        valOfBestAvg = valOfBestAvg / length;
         lines.add("Average of all last averages: " + avgSeedDataVal);
         lines.add("Average of all last bests: " + bestSeedDataVal);
-        lines.add("Average generation of best generation score (it stopped getting better): " + genOfBestAvg);
+        lines.add("Average of first bests: " + valOfBestAvg);
+        lines.add("Average of first best generation: " + genOfBestAvg);
         return lines;
     }
 
+    // Uses provided list of lings to print to disk a file of that data
     private static void print(ArrayList<String> lines, String title) {
         try{
             Files.write(Paths.get(title), lines, StandardOpenOption.CREATE);
