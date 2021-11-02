@@ -127,6 +127,7 @@ public class FileDecoder {
         }
     }
 
+    // Used in the decode method to ensure that we are reading a city index
     boolean isNumeric(String s) {
         try {
             Double.parseDouble(s);

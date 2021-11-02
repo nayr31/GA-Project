@@ -21,6 +21,8 @@ public class Mutation {
         chromosome.data[city2] = bucket; // Store the original value 1 into index 2
     }
 
+    //TODO make this Seeder.looseSeed based
+
     static void scramble(Chromosome chromosome){
         commonMutate(chromosome, "Scramble");
     }
